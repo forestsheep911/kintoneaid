@@ -31,10 +31,58 @@
                 "lib/jquery-3.4.1.min.js",
                 "js/photo_aid.js"
             ]
+        },
+        {
+            "matches": [
+                "https://*.cybozu.cn/k/*"
+            ],
+            "css": [
+                "css/bigphoto.css"
+            ],
+            "js": [
+                "lib/jquery-3.4.1.min.js",
+                "js/photo_aid.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.kintone.com/k/*"
+            ],
+            "css": [
+                "css/bigphoto.css"
+            ],
+            "js": [
+                "lib/jquery-3.4.1.min.js",
+                "js/photo_aid.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.cybozu-dev.com/k/*"
+            ],
+            "css": [
+                "css/bigphoto.css"
+            ],
+            "js": [
+                "lib/jquery-3.4.1.min.js",
+                "js/photo_aid.js"
+            ]
+        },
+        {
+            "matches": [
+                "https://*.kintone-dev.com/k/*"
+            ],
+            "css": [
+                "css/bigphoto.css"
+            ],
+            "js": [
+                "lib/jquery-3.4.1.min.js",
+                "js/photo_aid.js"
+            ]
         }
     ],
     "permissions": [
         "activeTab"
     ],
-    "version": "0.0.0.1"
+    "version": "0.0.0.2"
 }

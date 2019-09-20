@@ -1,4 +1,4 @@
-window.onload = function () {
+function photoinject() {
     // for detail
     let findusericon = $.find('.user-link-cybozu > img')
     if (findusericon.length != 0) {
@@ -74,10 +74,8 @@ window.onload = function () {
             usericon.remove()
         })
     }
-}
 
-// for notification
-setTimeout(() => {
+    // for notification
     let myiframe = $('iframe')
     if (myiframe.length != 0) {
         let findusericon = myiframe.contents().find(".user-link-cybozu > img")
@@ -124,7 +122,6 @@ setTimeout(() => {
 
         // for noti comment
         let findusercomicon = myiframe.contents().find(".itemlist-userImage-gaia > img")
-        console.log(findusercomicon)
         if (findusercomicon.length != 0) {
             $(findusercomicon).mouseenter(function (e) {
                 usericon = document.createElement("img")
@@ -205,4 +202,6 @@ setTimeout(() => {
             usericon.remove()
         })
     }
-}, 2000)
+}
+
+setTimeout(photoinject, 4000)
