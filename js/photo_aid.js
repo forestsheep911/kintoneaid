@@ -21,7 +21,10 @@ function photoinject() {
         })
 
         $(findusericon).mouseout(function (e) {
-            usericon.remove()
+            // usericon.remove()
+            if (typeof(usericon) != "undefined") {
+                usericon.remove()
+            }
         })
     }
     let finduserspan = $.find('.user-link-cybozu > span')
@@ -45,7 +48,9 @@ function photoinject() {
         })
 
         $(finduserspan).mouseout(function (e) {
-            usericon.remove()
+            if (typeof(usericon) != "undefined") {
+                usericon.remove()
+            }
         })
     }
 
@@ -71,7 +76,9 @@ function photoinject() {
         })
 
         $(findusercomicon).mouseout(function (e) {
-            usericon.remove()
+            if (typeof(usericon) != "undefined") {
+                usericon.remove()
+            }
         })
     }
 
@@ -95,7 +102,9 @@ function photoinject() {
             })
 
             $(findusericon).mouseout(function (e) {
-                usericon.remove()
+                if (typeof(usericon) != "undefined") {
+                    usericon.remove()
+                }
             })
         }
 
@@ -116,7 +125,9 @@ function photoinject() {
             })
 
             $(finduserspan).mouseout(function (e) {
-                usericon.remove()
+                if (typeof(usericon) != "undefined") {
+                    usericon.remove()
+                }
             })
         }
 
@@ -138,7 +149,9 @@ function photoinject() {
             })
 
             $(findusercomicon).mouseout(function (e) {
-                usericon.remove()
+                if (typeof(usericon) != "undefined") {
+                    usericon.remove()
+                }
             })
         }
     }
@@ -170,7 +183,9 @@ function photoinject() {
         })
 
         $(finduserlisticon).mouseout(function (e) {
-            usericon.remove()
+            if (typeof(usericon) != "undefined") {
+                usericon.remove()
+            }
         })
     }
     let finduserlistspan = $.find('.recordlist-username-gaia > span')
@@ -199,9 +214,11 @@ function photoinject() {
         })
 
         $(finduserlistspan).mouseout(function (e) {
-            usericon.remove()
+            if (typeof(usericon) != "undefined") {
+                usericon.remove()
+            }
         })
     }
 }
 
-setTimeout(photoinject, 4000)
+setTimeout(photoinject, 3500)
