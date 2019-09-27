@@ -89,7 +89,8 @@
             ],
             "js": [
                 "lib/jquery-3.4.1.min.js",
-                "js/at_aid.js"
+                "js/at_aid.js",
+                "js/recent_app_aid.js"
             ]
         }
     ],
