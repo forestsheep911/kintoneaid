@@ -2,6 +2,7 @@
     "background": {
         "scripts": [
             "lib/jquery-3.4.1.min.js",
+            "js/base/db.js",
             "js/background.js"
         ]
     },
@@ -21,81 +22,24 @@
         }
     },
     "content_scripts": [{
-            "matches": [
-                "https://*.cybozu.com/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/photo_aid.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://*.cybozu.cn/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/photo_aid.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://*.kintone.com/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/photo_aid.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://*.cybozu-dev.com/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/photo_aid.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://*.kintone-dev.com/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/photo_aid.js"
-            ]
-        },
-        {
-            "matches": [
-                "https://*.cybozu.com/k/*"
-            ],
-            "css": [
-                "css/bigphoto.css"
-            ],
-            "js": [
-                "lib/jquery-3.4.1.min.js",
-                "js/at_aid.js",
-                "js/recent_app_aid.js"
-            ]
-        }
-    ],
+        "matches": [
+            "https://*.cybozu.com/k/*",
+            "https://*.cybozu.cn/k/*"
+        ],
+        "css": [
+            "css/bigphoto.css"
+        ],
+        "js": [
+            "lib/jquery-3.4.1.min.js",
+            "js/base/db.js",
+            "js/photo_aid.js",
+            "js/at_aid.js",
+            "js/mostuse_app_aid.js"
+        ]
+    }],
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "tabs"
     ],
     "version": "0.0.0.3"
 }
