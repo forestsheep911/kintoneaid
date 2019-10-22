@@ -67,16 +67,19 @@ chrome.runtime.sendMessage(null, {
     console.log("recived mostuseapp switch value:")
     console.log(response)
     if (response) {
-        chrome.runtime.sendMessage(null, MAX_NUM, null, function (response) {})
+        setTimeout(() => {
+            chrome.runtime.sendMessage(null, MAX_NUM, null, function (response) {})
+        }, 1000);
         window.addEventListener('popstate', function (e) {
             console.log("popstate")
             console.log($('#mostusedapp'))
-            if ($('#mostusedapp').length > 0 ) {
+            if ($('#mostusedapp').length > 0) {
                 console.log("already have mua")
             } else {
                 console.log("no mua")
                 setTimeout(() => {
                     chrome.runtime.sendMessage(null, MAX_NUM, null, function (response) {})
+
                 }, 1000);
             }
         })
