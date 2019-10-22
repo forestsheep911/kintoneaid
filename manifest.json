@@ -1,5 +1,6 @@
 {
     "background": {
+        "background_page": "background.html",
         "scripts": [
             "lib/jquery-3.4.1.min.js",
             "js/base/db.js",
@@ -14,6 +15,7 @@
     },
     "manifest_version": 2,
     "name": "kintone aid",
+    "options_page": "option/option.html",
     "browser_action": {
         "default_icon": {
             "16": "icon/t-16.png",
@@ -41,5 +43,6 @@
         "activeTab",
         "tabs"
     ],
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "version": "0.0.0.3"
 }
