@@ -1,0 +1,252 @@
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v14/JTUSjIg1_i6t8kCHKm459Wlhzg.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Montserrat Bold'), local('Montserrat-Bold'), url(https://fonts.gstatic.com/s/montserrat/v14/JTURjIg1_i6t8kCHKm45_dJE3gnD-w.ttf) format('truetype');
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    background: #333;
+}
+
+div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.switch {
+    display: block;
+    width: 300px;
+    height: 68px;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px;
+    text-transform: uppercase;
+}
+
+.switch .button-wrapper {
+    width: 100%;
+    height: 48px;
+    margin: 0 auto;
+    padding: 5px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 8px 8px #000, inset 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #444;
+}
+
+.switch .button-wrapper .button {
+    cursor: pointer;
+    position: relative;
+    display: block;
+    float: left;
+    width: 50%;
+    color: #FFBB33;
+    text-shadow: 0 0 8px #FFBB33, 0 0 20px #FFBB33;
+}
+
+.switch .button-wrapper .button .label,
+.switch .button-wrapper .button .depth {
+    position: relative;
+    width: 100%;
+    height: 36px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 36px;
+    outline: 1px solid transparent;
+    background-color: #444;
+    background-image: -moz-linear-gradient(top, #666, #444);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#666), to(#444));
+    background-image: -webkit-linear-gradient(top, #666, #444);
+    background-image: -o-linear-gradient(top, #666, #444);
+    background-image: linear-gradient(to bottom, #666, #444);
+    background-size: 100%;
+    -webkit-transform: perspective(500px) translateY(0deg);
+    -ms-transform: perspective(500px) translateY(0deg);
+    transform: perspective(500px) translateY(0deg);
+}
+
+.switch .button-wrapper .button .label {
+    z-index: 5;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 rgba(255, 255, 255, 0);
+}
+
+.switch .button-wrapper .button .depth {
+    width: 95%;
+    margin: 0;
+    margin-top: -36px;
+    background-color: rgba(106, 106, 106, 0.24);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(255, 255, 255, 0.1)), color-stop(15%, rgba(0, 0, 0, 0.2)), color-stop(85%, rgba(0, 0, 0, 0.6)), to(rgba(0, 0, 0, 0.8)));
+    background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.6) 85%, rgba(0, 0, 0, 0.8));
+    background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.6) 85%, rgba(0, 0, 0, 0.8));
+    background-image: -o-linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.6) 85%, rgba(0, 0, 0, 0.8));
+    background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.6) 85%, rgba(0, 0, 0, 0.8));
+    background-color: #666;
+    z-index: 4;
+}
+
+.switch .button-wrapper .button:first-child .label,
+.switch .button-wrapper .button:first-child .depth {
+    float: right;
+    -webkit-transform-origin: right center;
+    -moz-transform-origin: right center;
+    -ms-transform-origin: right center;
+    -o-transform-origin: right center;
+    transform-origin: right center;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    transition: all 0.3s linear;
+}
+
+.switch .button-wrapper .button:first-child .depth {
+    box-shadow: 0 4px 4px #000, inset 0 4px 4px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(0, 0, 0, 0.5), inset 1px 0 1px rgba(0, 0, 0, 0.75);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.switch .button-wrapper .button:first-child.inactive {
+    color: #444;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.switch .button-wrapper .button:first-child.inactive .label,
+.switch .button-wrapper .button:first-child.inactive .depth {
+    float: right;
+    -webkit-transform: perspective(500px) rotateY(35deg);
+    -ms-transform: perspective(500px) rotateY(35deg);
+    transform: perspective(500px) rotateY(35deg);
+}
+
+.switch .button-wrapper .button:first-child.inactive .label {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 1px 0 0 rgba(255, 255, 255, 0.1);
+    width: 90%;
+    background-size: 200%;
+}
+
+.switch .button-wrapper .button:first-child.inactive .depth {
+    width: 100%;
+}
+
+.switch .button-wrapper .button:last-child .label,
+.switch .button-wrapper .button:last-child .depth {
+    float: left;
+    -webkit-transform-origin: left center;
+    -moz-transform-origin: left center;
+    -ms-transform-origin: left center;
+    -o-transform-origin: left center;
+    transform-origin: left center;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    transition: all 0.3s linear;
+}
+
+.switch .button-wrapper .button:last-child .depth {
+    box-shadow: 0 4px 4px #000, inset 0 4px 4px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(0, 0, 0, 0.5), inset -1px 0 1px rgba(0, 0, 0, 0.75);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.switch .button-wrapper .button:last-child.inactive {
+    color: #444;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.switch .button-wrapper .button:last-child.inactive .label,
+.switch .button-wrapper .button:last-child.inactive .depth {
+    float: left;
+    -webkit-transform: perspective(500px) rotateY(-35deg);
+    -ms-transform: perspective(500px) rotateY(-35deg);
+    transform: perspective(500px) rotateY(-35deg);
+}
+
+.switch .button-wrapper .button:last-child.inactive .label {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset -1px 0 0 rgba(255, 255, 255, 0.1);
+    width: 90%;
+    background-size: 200%;
+}
+
+.switch .button-wrapper .button:last-child.inactive .depth {
+    width: 100%;
+}
+
+.content {
+    display: block;
+    color: #bbb;
+    width: 400px;
+    margin: 0 auto;
+    margin-top: 20px;
+    text-align: left;
+    font-size: 18px;
+    font-weight: 700;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    transition: all 0.3s linear 0.3s;
+}
+
+.content.inactive {
+    opacity: 0.2;
+}
+
+.disclaimer {
+    position: fixed;
+    display: block;
+    width: 300px;
+    height: 40px;
+    line-height: 20px;
+    font-size: 13px;
+    text-align: center;
+    bottom: 10px;
+    left: 50%;
+    margin-left: -150px;
+    color: rgba(102, 102, 102, 0.5);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.disclaimer a {
+    color: rgba(102, 102, 102, 0.5);
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.3s linear;
+}
+
+.disclaimer a:hover {
+    color: #FFF;
+}
+
+.ttbb {
+    display: inline;
+}
+
+.option_text {
+    display: block;
+    width: 300px;
+    height: 68px;
+    margin: auto;
+    margin-top: 60px;
+    font-size: 20px;
+    /* text-transform: uppercase; */
+    /* align-content: center; */
+    /* align-items: center; */
+    /* align-self: center; */
+    /* text-align: center; */
+}
+
+.option_item_title {
+    display: inline-block;
+
+}
+
+.option_item_input {
+    display: inline-block;
+    margin-left: 70px;
+}
