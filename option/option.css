@@ -34,7 +34,7 @@ div {
     text-transform: uppercase;
 }
 
-.switch .button-wrapper {
+.switch .button-wrapper{
     width: 100%;
     height: 48px;
     margin: 0 auto;
@@ -245,13 +245,39 @@ div {
 
 .option_item_title {
     position: absolute;
-    left:0px;
+    left: 10px;
+    height: 30px;
+    padding-top: 10px;
     display: block;
+    color: #BBB;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.3s linear 0.3s;
 }
 
 .option_item_input {
     position: absolute;
-    right:10px;
-    width:30px;
+    right: 10px;
+    width: 40px;
+    height: 30px;
     display: block;
+    padding-top: 5px;
+    padding-right: 5px;
+    color: #FFBB33;
+    font-size: 16px;
+    text-align: right;
+    transition: all 0.3s linear 0.3s;
+    margin: 0 auto;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 8px 8px #000, inset 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #444;
+}
+
+.option_item_title.inactive{
+    opacity: 0.2;
+}
+
+.option_item_input.inactive {
+    color: #777;
 }

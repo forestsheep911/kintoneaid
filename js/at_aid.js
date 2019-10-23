@@ -1,7 +1,9 @@
+let appenStringFormat = "<a class=\"ocean-ui-plugin-mention-user ocean-ui-plugin-linkbubble-no\" href=\"{0}\" data-mention-id=\"{1}\" tabindex=\"-1\" style=\"-webkit-user-modify: read-only;\">@{2}</a>&nbsp;"
+
 function stringFormat(src) {
     if (arguments.length === 0) return null
     let args = Array.prototype.slice.call(arguments, 1)
-    return src.replace(/\{(\d+)\}/g, function (m, i) {
+    return src.replace(/\{(\d+)\}/g, function(m, i) {
         return args[i]
     })
 }
@@ -27,8 +29,6 @@ function atinject() {
     // 0 path
     // 1 mentionid
     // 2 username
-    let appenStringFormat = "<a class=\"ocean-ui-plugin-mention-user ocean-ui-plugin-linkbubble-no\" href=\"{0}\" data-mention-id=\"{1}\" tabindex=\"-1\" style=\"-webkit-user-modify: read-only;\">@{2}</a>&nbsp;"
-
     let finduserhref = $.find('.user-link-cybozu')
     if (finduserhref.length != 0) {
         for (let i = 0; i < finduserhref.length; i++) {
@@ -48,49 +48,47 @@ function atinject() {
             let ata = document.createElement("a")
             ata.style = 'margin-left: 5px'
             ata.innerText = '@'
-            $(ata).click(function () {
-                let replybox = $.find('.ocean-ui-comments-commentform-textarea')
-                $(replybox).focus()
-                let replyinputareas = $.find('.ocean-ui-editor-field')
-                let replyinputarea
-                if (replyinputareas.length === 0) {
-                    return
-                } else {
-                    replyinputarea = replyinputareas[0]
-                }
-                let lasteles = $(replyinputarea).children().last()
-                if (lasteles.length > 0) {
-                    let lastele = lasteles[0]
-                    // 其他情况不是进入br就是进入div，都可以移动到文末
-                    if (lastele.nodeName === "BR") {
-                        $(lastele).before(stringFormat(appenStringFormat, path, mentionid, username))
-                        placeCaretAtEnd(replyinputarea)
-                    } else if (lastele.nodeName === "DIV") {
-                        let divbr = $(lastele).children().last()
-                        if (divbr.length > 0 && divbr[0].nodeName === "BR") {
-                            $(divbr[0]).before(stringFormat(appenStringFormat, path, mentionid, username))
-                        } else {
-                            $(lastele).append(stringFormat(appenStringFormat, path, mentionid, username))
-                        }
-                        placeCaretAtEnd(replyinputarea)
+                /*jshint -W083 */
+            $(ata).click(function() {
+                    let replybox = $.find('.ocean-ui-comments-commentform-textarea')
+                    $(replybox).focus()
+                    let replyinputareas = $.find('.ocean-ui-editor-field')
+                    let replyinputarea
+                    if (replyinputareas.length === 0) {
+                        return
                     } else {
-                        // 如果在第一行输入些文字，然后点@，再点一次@，会进入这里
+                        replyinputarea = replyinputareas[0]
+                    }
+                    let lasteles = $(replyinputarea).children().last()
+                    if (lasteles.length > 0) {
+                        let lastele = lasteles[0]
+                            // 其他情况不是进入br就是进入div，都可以移动到文末
+                        if (lastele.nodeName === "BR") {
+                            $(lastele).before(stringFormat(appenStringFormat, path, mentionid, username))
+                            placeCaretAtEnd(replyinputarea)
+                        } else if (lastele.nodeName === "DIV") {
+                            let divbr = $(lastele).children().last()
+                            if (divbr.length > 0 && divbr[0].nodeName === "BR") {
+                                $(divbr[0]).before(stringFormat(appenStringFormat, path, mentionid, username))
+                            } else {
+                                $(lastele).append(stringFormat(appenStringFormat, path, mentionid, username))
+                            }
+                            placeCaretAtEnd(replyinputarea)
+                        } else {
+                            // 如果在第一行输入些文字，然后点@，再点一次@，会进入这里
+                            $(replyinputarea).append(stringFormat(appenStringFormat, path, mentionid, username))
+                            placeCaretAtEnd(replyinputarea)
+                        }
+                    } else {
+                        // 如果在第一行输入些文字，然后点@，会进入这里
                         $(replyinputarea).append(stringFormat(appenStringFormat, path, mentionid, username))
                         placeCaretAtEnd(replyinputarea)
                     }
-                } else {
-                    // 如果在第一行输入些文字，然后点@，会进入这里
-                    $(replyinputarea).append(stringFormat(appenStringFormat, path, mentionid, username))
-                    placeCaretAtEnd(replyinputarea)
-                }
-            })
-
-            // append the element
+                })
+                // append the element
             $(finduserhref[i]).parent().append(ata)
         }
     }
-
-    // for notification
 }
 
 setTimeout(atinject, 3500);

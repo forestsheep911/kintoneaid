@@ -1,14 +1,12 @@
-const MAX_NUM = {
-    mostuseappnum: 5
-}
-
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     console.log(message)
     sendResponse("most use app list has been recived")
-    show_apps(message)
+    if (message.enable) {
+        showApps(message.apps)
+    }
 })
 
-let show_apps = function (mostapp) {
+let showApps = function(mostapp) {
     console.log("show most use app block")
     console.log(document.readyState)
     let bodyright = $.find('.ocean-portal-body-right')
@@ -37,9 +35,9 @@ let show_apps = function (mostapp) {
     appHeaderShowNumber.setAttribute("title", "set show number")
     appHeaderShowNumber.setAttribute("type", "button")
     $(appHeaderShowNumber).on("click", () => {
-        console.log("number button clicked")
-    })
-    // $(appHeader).append(appHeaderShowNumber)
+            console.log("number button clicked")
+        })
+        // $(appHeader).append(appHeaderShowNumber)
 
 
 
@@ -47,7 +45,7 @@ let show_apps = function (mostapp) {
     listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
     $(appList).append(listui)
 
-    for (i in mostapp) {
+    for (var i in mostapp) {
         let listli1 = document.createElement("li")
         $(listui).append(listli1)
         let b1 = document.createElement("a")
@@ -61,31 +59,24 @@ let show_apps = function (mostapp) {
     }
 }
 
-chrome.runtime.sendMessage(null, {
-    mostuseappon: 1
-}, null, function (response) {
-    console.log("recived mostuseapp switch value:")
-    console.log(response)
-    if (response) {
+setTimeout(() => {
+    console.log("a")
+    chrome.runtime.sendMessage(null, "", null, function(response) {})
+}, 1000)
+
+window.addEventListener('popstate', function(e) {
+    console.log("popstate")
+    console.log($('#mostusedapp'))
+    if ($('#mostusedapp').length > 0) {
+        console.log("already have mua")
+    } else {
+        console.log("no mua")
         setTimeout(() => {
-            chrome.runtime.sendMessage(null, MAX_NUM, null, function (response) {})
+            chrome.runtime.sendMessage(null, "", null, function(response) {})
         }, 1000);
-        window.addEventListener('popstate', function (e) {
-            console.log("popstate")
-            console.log($('#mostusedapp'))
-            if ($('#mostusedapp').length > 0) {
-                console.log("already have mua")
-            } else {
-                console.log("no mua")
-                setTimeout(() => {
-                    chrome.runtime.sendMessage(null, MAX_NUM, null, function (response) {})
-
-                }, 1000);
-            }
-        })
-
-        window.onhashchange = () => {
-            console.log("onhashchange")
-        }
     }
 })
+
+window.onhashchange = () => {
+    console.log("onhashchange")
+}

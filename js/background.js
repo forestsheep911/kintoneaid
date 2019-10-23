@@ -4,15 +4,12 @@ function doAfterCreated(tab) {
     console.log(tab)
     let URLobj = new URL(tab.url)
     console.log(URLobj)
-    // if (URLobj.hostname === "bozuman.cybozu.com" && URLobj.pathname.startsWith("/k/")) {
-    //     console.log(URLobj)
-    // }
     console.log(URLobj.pathname)
     let ptn = new RegExp(/^\/k\/\d+\/$/g)
     let matchReg
     if ((matchReg = ptn.exec(URLobj.pathname)) != null) {
         console.log(matchReg)
-        openDB().then(function (promiseValue) {
+        openDB().then(function(promiseValue) {
             let dbobj = promiseValue
             console.log(dbobj)
             let trans = dbobj.transaction(["mostuseapp"], "readwrite")
@@ -47,8 +44,27 @@ function doAfterCreated(tab) {
     }
 }
 
-function getData(maxcount, tab) {
-    openDB().then(function (promiseValue) {
+function getData(tab) {
+    // get on or off and maxnumber
+    let mostAppEnable
+    let maxCount
+    if (localStorage.config != null) {
+        let config = JSON.parse(localStorage.config)
+        mostAppEnable = config.most_app
+        if (!mostAppEnable) {
+            chrome.tabs.sendMessage(tab.id, {
+                enable: false
+            }, null, function(response) {})
+            return
+        }
+        maxCount = config.most_app_num
+    } else {
+        chrome.tabs.sendMessage(tab.id, {
+            enable: false
+        }, null, function(response) {})
+        return
+    }
+    openDB().then(function(promiseValue) {
         let dbobj = promiseValue
         console.log(dbobj)
         let trans = dbobj.transaction(["mostuseapp"], "readwrite")
@@ -83,34 +99,29 @@ function getData(maxcount, tab) {
                 let c = 0
                 for (i in readyToSendArray) {
                     c++
-                    if (c > maxcount) {
+                    if (c > maxCount) {
                         // delete readyToSendArray[i]
                         readyToSendArray.splice(i)
                     }
                 }
                 console.log(readyToSendArray)
-                chrome.tabs.sendMessage(tab.id, readyToSendArray, null, function (response) {})
+                chrome.tabs.sendMessage(tab.id, {
+                    enable: true,
+                    apps: readyToSendArray
+                }, null, function(response) {})
             }
         }
     })
 }
 
-chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function(tabID, changeInfo, tab) {
     if (changeInfo.status && changeInfo.status == "complete") {
         doAfterCreated(tab)
     }
 })
 
-chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     console.log(message)
-    if (message.mostuseappnum) {
-        getData(message.mostuseappnum, sender.tab)
-        sendResponse("max number has been sent --by background")
-    }
-    console.log(message.mostuseappon)
-    if (message.mostuseappon) {
-        let config = JSON.parse(localStorage.config)
-        console.log(config.most_app)
-        sendResponse(config.most_app)
-    }
+    getData(sender.tab)
+    sendResponse("max number has been sent --by background")
 })
