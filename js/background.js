@@ -1,4 +1,23 @@
-const MAX_MOST_USE_APP = 3
+function isBigUserIconEnable(tab) {
+    if (localStorage.config != null) {
+        let config = JSON.parse(localStorage.config)
+        let bigUserIconEnable = config.big_icon
+        if (!bigUserIconEnable) {
+            chrome.tabs.sendMessage(tab.id, {
+                big_user_icon_enable: false
+            }, null, function(response) {})
+            return
+        }
+    } else {
+        chrome.tabs.sendMessage(tab.id, {
+            big_user_icon_enable: false
+        }, null, function(response) {})
+        return
+    }
+    chrome.tabs.sendMessage(tab.id, {
+        big_user_icon_enable: true
+    }, null, function(response) {})
+}
 
 function doAfterCreated(tab) {
     console.log(tab)
@@ -44,13 +63,12 @@ function doAfterCreated(tab) {
     }
 }
 
-function getData(tab) {
+function getMostUsedAppData(tab) {
     // get on or off and maxnumber
-    let mostAppEnable
     let maxCount
     if (localStorage.config != null) {
         let config = JSON.parse(localStorage.config)
-        mostAppEnable = config.most_app
+        let mostAppEnable = config.most_app
         if (!mostAppEnable) {
             chrome.tabs.sendMessage(tab.id, {
                 enable: false
@@ -97,7 +115,7 @@ function getData(tab) {
                 // no more results
                 console.log(readyToSendArray)
                 let c = 0
-                for (i in readyToSendArray) {
+                for (var i in readyToSendArray) {
                     c++
                     if (c > maxCount) {
                         // delete readyToSendArray[i]
@@ -106,7 +124,7 @@ function getData(tab) {
                 }
                 console.log(readyToSendArray)
                 chrome.tabs.sendMessage(tab.id, {
-                    enable: true,
+                    most_used_app_enable: true,
                     apps: readyToSendArray
                 }, null, function(response) {})
             }
@@ -122,6 +140,16 @@ chrome.tabs.onUpdated.addListener(function(tabID, changeInfo, tab) {
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     console.log(message)
-    getData(sender.tab)
-    sendResponse("max number has been sent --by background")
+    console.log(message.mostusedapp)
+    console.log(message.bigusericon)
+    if (message.mostusedapp) {
+        console.log("start most used app")
+        getMostUsedAppData(sender.tab)
+        sendResponse("most used app request has been received. --by background")
+    }
+    if (message.bigusericon) {
+        console.log("start biguser")
+        isBigUserIconEnable(sender.tab)
+        sendResponse("big user icon request has been received. --by background")
+    }
 })
