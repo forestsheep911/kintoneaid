@@ -7,7 +7,7 @@
             "js/background.js"
         ]
     },
-    "description": "happy kintone every day",
+    "description": "Very useful tools for kintone. -- I think.",
     "icons": {
         "16": "icon/t-16.png",
         "48": "icon/t-64.png",
