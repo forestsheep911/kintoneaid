@@ -1,13 +1,12 @@
 function optionGo() {
-    console.log("aaa")
     let vm = new Vue({
         el: '#op',
         data: {
             config: {
                 big_icon: true,
                 easy_at: true,
-                most_app: false,
-                most_app_num: 1
+                most_app: true,
+                most_app_num: 5
             }
         },
         mounted: function () {
@@ -27,6 +26,15 @@ function optionGo() {
                     $('#tc31').toggleClass('inactive')
                     $('#tc32').toggleClass('inactive')
                 }
+            } else {
+                $('#bc1 .button').toggleClass('inactive')
+                $('#bc1 .content').toggleClass('inactive')
+                $('#bc2 .button').toggleClass('inactive')
+                $('#bc2 .content').toggleClass('inactive')
+                $('#bc3 .button').toggleClass('inactive')
+                $('#bc3 .content').toggleClass('inactive')
+                $('#tc31').toggleClass('inactive')
+                $('#tc32').toggleClass('inactive')
             }
         },
         methods: {

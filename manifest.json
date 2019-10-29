@@ -36,7 +36,8 @@
             "js/base/db.js",
             "js/photo_aid.js",
             "js/at_aid.js",
-            "js/mostuse_app_aid.js"
+            "js/mostuse_app_aid.js",
+            "js/event_reg.js"
         ]
     }],
     "permissions": [
@@ -44,5 +45,5 @@
         "tabs"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "version": "0.0.0.3"
+    "version": "0.0.0.91"
 }

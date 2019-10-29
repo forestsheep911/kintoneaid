@@ -1,14 +1,4 @@
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.log(message)
-    sendResponse("most use app list has been recived")
-    if (message.most_used_app_enable) {
-        showApps(message.apps)
-    }
-})
-
-let showApps = function(mostapp) {
-    console.log("show most use app block")
-    console.log(document.readyState)
+let showApps = function (mostapp) {
     let bodyright = $.find('.ocean-portal-body-right')
     console.log(bodyright)
     let rp = document.createElement("div")
@@ -30,14 +20,6 @@ let showApps = function(mostapp) {
     appheadername.innerText = "よく使うアプリ"
     $(appHeader).append(appheadername)
 
-    let appHeaderShowNumber = document.createElement("button")
-    appHeaderShowNumber.setAttribute("class", "ocean-portal-applist-newapp gaia-argoui-widget-control")
-    appHeaderShowNumber.setAttribute("title", "set show number")
-    appHeaderShowNumber.setAttribute("type", "button")
-    $(appHeaderShowNumber).on("click", () => {
-        console.log("number button clicked")
-    })
-
     let listui = document.createElement("ui")
     listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
     $(appList).append(listui)
@@ -56,43 +38,22 @@ let showApps = function(mostapp) {
     }
 }
 
-function isPortal() {
-    let isportal = document.getElementsByClassName('.ocean-portal-body-right')
-    return isportal
-}
+console.log("starting most used app")
 
-window.onload = function() {
-    console.log("after onload")
-    console.log(isPortal())
+setTimeout(() => {
+    if (document.getElementsByClassName('ocean-portal-body-right').length == 0) {
+        console.log("found not in portal")
+        return
+    }
     console.log($('#mostusedapp'))
     if ($('#mostusedapp').length > 0) {
         console.log("already have mua")
     } else {
         console.log("no mua")
-        setTimeout(() => {
-            chrome.runtime.sendMessage(null, {
-                "mostusedapp": true
-            }, null, function(response) {})
-        }, 1000);
+        chrome.runtime.sendMessage(null, {
+            "mostusedapp": true
+        }, null, function (response) {
+            console.log(response)
+        })
     }
-}
-
-window.addEventListener('popstate', function(e) {
-    console.log("popstate")
-    console.log(isPortal())
-    setTimeout(() => {
-        console.log($('#mostusedapp'))
-        if ($('#mostusedapp').length > 0) {
-            console.log("already have mua")
-        } else {
-            console.log("no mua")
-            chrome.runtime.sendMessage(null, {
-                "mostusedapp": true
-            }, null, function(response) {})
-        }
-    }, 3000);
-})
-
-window.onhashchange = () => {
-    console.log("onhashchange")
-}
+}, 700);

@@ -1,17 +1,17 @@
 function photoinject() {
     // for detail
     let findusericon = $.find('.user-link-cybozu > img')
-    console.log(findusericon)
+    // console.log(findusericon)
     if (findusericon.length != 0) {
         let usericon = document.createElement("img")
-        $(findusericon).mouseenter(function(e) {
+        $(findusericon).mouseenter(function (e) {
             // usericon = document.createElement("img")
             usericon.src = e.target.src.replace(/SMALL/g, "ORIGINAL")
             usericon.setAttribute("class", "showlarge")
             $('body').append(usericon)
         })
 
-        $(findusericon).mousemove(function(e) {
+        $(findusericon).mousemove(function (e) {
             usericon.style.left = e.clientX + 25 + "px"
             if (e.clientY + usericon.height > document.body.clientHeight) {
                 let y = document.body.clientHeight - usericon.height - 50
@@ -21,25 +21,25 @@ function photoinject() {
             }
         })
 
-        $(findusericon).mouseout(function(e) {
+        $(findusericon).mouseout(function (e) {
             // usericon.remove()
-            if (typeof(usericon) != "undefined") {
+            if (typeof (usericon) != "undefined") {
                 usericon.remove()
             }
         })
     }
     let finduserspan = $.find('.user-link-cybozu > span')
-    console.log(finduserspan)
+    // console.log(finduserspan)
     if (finduserspan.length != 0) {
         let usericon = document.createElement("img")
-        $(finduserspan).mouseenter(function(e) {
+        $(finduserspan).mouseenter(function (e) {
             // usericon = document.createElement("img")
             usericon.src = $(e.target).prev()[0].src.replace(/SMALL/g, "ORIGINAL")
             usericon.setAttribute("class", "showlarge")
             $('body').append(usericon)
         })
 
-        $(finduserspan).mousemove(function(e) {
+        $(finduserspan).mousemove(function (e) {
             usericon.style.left = e.clientX + 25 + "px"
             if (e.clientY + usericon.height > document.body.clientHeight) {
                 let y = document.body.clientHeight - usericon.height - 50
@@ -49,8 +49,8 @@ function photoinject() {
             }
         })
 
-        $(finduserspan).mouseout(function(e) {
-            if (typeof(usericon) != "undefined") {
+        $(finduserspan).mouseout(function (e) {
+            if (typeof (usericon) != "undefined") {
                 usericon.remove()
             }
         })
@@ -60,14 +60,14 @@ function photoinject() {
     let findusercomicon = $.find('.itemlist-userImage-gaia > img')
     if (findusercomicon.length != 0) {
         let usericon = document.createElement("img")
-        $(findusercomicon).mouseenter(function(e) {
+        $(findusercomicon).mouseenter(function (e) {
             // usericon = document.createElement("img")
             usericon.src = e.target.src.replace(/NORMAL/g, "ORIGINAL")
             usericon.setAttribute("class", "showlarge")
             $('body').append(usericon)
         })
 
-        $(findusercomicon).mousemove(function(e) {
+        $(findusercomicon).mousemove(function (e) {
             usericon.style.left = e.clientX - 425 + "px"
             if (e.clientY + usericon.height > document.body.clientHeight) {
                 let y = document.body.clientHeight - usericon.height - 50
@@ -77,8 +77,8 @@ function photoinject() {
             }
         })
 
-        $(findusercomicon).mouseout(function(e) {
-            if (typeof(usericon) != "undefined") {
+        $(findusercomicon).mouseout(function (e) {
+            if (typeof (usericon) != "undefined") {
                 usericon.remove()
             }
         })
@@ -90,7 +90,7 @@ function photoinject() {
         let findusericon = myiframe.contents().find(".user-link-cybozu > img")
         if (findusericon.length != 0) {
             let usericon = document.createElement("img")
-            $(findusericon).mouseenter(function(e) {
+            $(findusericon).mouseenter(function (e) {
                 // usericon = document.createElement("img")
                 usericon.src = e.target.src.replace(/SMALL/g, "ORIGINAL")
                 usericon.style.position = "fixed"
@@ -99,13 +99,13 @@ function photoinject() {
                 myiframe.contents().find('body').append(usericon)
             })
 
-            $(findusericon).mousemove(function(e) {
+            $(findusericon).mousemove(function (e) {
                 usericon.style.left = e.clientX + 25 + "px"
                 usericon.style.top = e.clientY - 100 + "px"
             })
 
-            $(findusericon).mouseout(function(e) {
-                if (typeof(usericon) != "undefined") {
+            $(findusericon).mouseout(function (e) {
+                if (typeof (usericon) != "undefined") {
                     usericon.remove()
                 }
             })
@@ -114,7 +114,7 @@ function photoinject() {
         let finduserspan = myiframe.contents().find(".user-link-cybozu > span")
         if (finduserspan.length != 0) {
             let usericon = document.createElement("img")
-            $(finduserspan).mouseenter(function(e) {
+            $(finduserspan).mouseenter(function (e) {
                 // usericon = document.createElement("img")
                 usericon.src = $(e.target).prev()[0].src.replace(/SMALL/g, "ORIGINAL")
                 usericon.style.position = "fixed"
@@ -123,13 +123,13 @@ function photoinject() {
                 myiframe.contents().find('body').append(usericon)
             })
 
-            $(finduserspan).mousemove(function(e) {
+            $(finduserspan).mousemove(function (e) {
                 usericon.style.left = e.clientX + 25 + "px"
                 usericon.style.top = e.clientY - 100 + "px"
             })
 
-            $(finduserspan).mouseout(function(e) {
-                if (typeof(usericon) != "undefined") {
+            $(finduserspan).mouseout(function (e) {
+                if (typeof (usericon) != "undefined") {
                     usericon.remove()
                 }
             })
@@ -139,7 +139,7 @@ function photoinject() {
         let findusercomicon = myiframe.contents().find(".itemlist-userImage-gaia > img")
         if (findusercomicon.length != 0) {
             let usericon = document.createElement("img")
-            $(findusercomicon).mouseenter(function(e) {
+            $(findusercomicon).mouseenter(function (e) {
                 // usericon = document.createElement("img")
                 usericon.src = e.target.src.replace(/NORMAL/g, "ORIGINAL")
                 usericon.style.position = "fixed"
@@ -148,13 +148,13 @@ function photoinject() {
                 myiframe.contents().find('body').append(usericon)
             })
 
-            $(findusercomicon).mousemove(function(e) {
+            $(findusercomicon).mousemove(function (e) {
                 usericon.style.left = e.clientX - 425 + "px"
                 usericon.style.top = e.clientY - 100 + "px"
             })
 
-            $(findusercomicon).mouseout(function(e) {
-                if (typeof(usericon) != "undefined") {
+            $(findusercomicon).mouseout(function (e) {
+                if (typeof (usericon) != "undefined") {
                     usericon.remove()
                 }
             })
@@ -165,14 +165,14 @@ function photoinject() {
     let finduserlisticon = $.find('.recordlist-username-gaia > img')
     if (finduserlisticon.length != 0) {
         let usericon = document.createElement("img")
-        $(finduserlisticon).mouseenter(function(e) {
+        $(finduserlisticon).mouseenter(function (e) {
             // usericon = document.createElement("img")
             usericon.src = e.target.src.replace(/SMALL/g, "ORIGINAL")
             usericon.setAttribute("class", "showlarge")
             $('body').append(usericon)
         })
 
-        $(finduserlisticon).mousemove(function(e) {
+        $(finduserlisticon).mousemove(function (e) {
             if (e.clientX + usericon.width > document.body.clientWidth) {
                 let x = e.clientX - usericon.width - 25
                 usericon.style.left = x + "px"
@@ -187,8 +187,8 @@ function photoinject() {
             }
         })
 
-        $(finduserlisticon).mouseout(function(e) {
-            if (typeof(usericon) != "undefined") {
+        $(finduserlisticon).mouseout(function (e) {
+            if (typeof (usericon) != "undefined") {
                 usericon.remove()
             }
         })
@@ -196,14 +196,14 @@ function photoinject() {
     let finduserlistspan = $.find('.recordlist-username-gaia > span')
     if (finduserlistspan.length != 0) {
         let usericon = document.createElement("img")
-        $(finduserlistspan).mouseenter(function(e) {
+        $(finduserlistspan).mouseenter(function (e) {
             // usericon = document.createElement("img")
             usericon.src = $(e.target).prev()[0].src.replace(/SMALL/g, "ORIGINAL")
             usericon.setAttribute("class", "showlarge")
             $('body').append(usericon)
         })
 
-        $(finduserlistspan).mousemove(function(e) {
+        $(finduserlistspan).mousemove(function (e) {
             if (e.clientX + usericon.width > document.body.clientWidth) {
                 let x = e.clientX - usericon.width - 25
                 usericon.style.left = x + "px"
@@ -218,25 +218,18 @@ function photoinject() {
             }
         })
 
-        $(finduserlistspan).mouseout(function(e) {
-            if (typeof(usericon) != "undefined") {
+        $(finduserlistspan).mouseout(function (e) {
+            if (typeof (usericon) != "undefined") {
                 usericon.remove()
             }
         })
     }
 }
 
-
-chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-    console.log(message)
-    sendResponse("bigusericon recived")
-    if (message.big_user_icon_enable) {
-        setTimeout(photoinject, 2000)
-    }
-})
+console.log("starting big user icon")
 
 chrome.runtime.sendMessage(null, {
     "bigusericon": true
-}, null, function(response) {
+}, null, function (response) {
     console.log(response)
 })
