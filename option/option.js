@@ -7,7 +7,13 @@ function optionGo() {
                 easy_at: true,
                 most_app: true,
                 most_app_num: 5
-            }
+            },
+            bigUserIconTitle: chrome.i18n.getMessage("optionBigUserIconName"),
+            easyAtTitle: chrome.i18n.getMessage("optionEasyAtName"),
+            mostUsedAppTitle: chrome.i18n.getMessage("optionMostUsedAppName"),
+            maxMostUsedAppNumberTitle: chrome.i18n.getMessage("optionMostUsedAppMaxName"),
+            enableName: chrome.i18n.getMessage("enableName"),
+            disableName: chrome.i18n.getMessage("disableName")
         },
         mounted: function () {
             if (localStorage.config != null) {

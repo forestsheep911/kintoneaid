@@ -17,7 +17,13 @@ let showApps = function (mostapp) {
 
     let appheadername = document.createElement("H3")
     appheadername.setAttribute("class", "gaia-argoui-widget-title")
-    appheadername.innerText = "よく使うアプリ"
+    chrome.i18n.getAcceptLanguages(function (result) {
+        for (i = 0; i < result.length; i++) {
+            console.log(result[i])
+        }
+    })
+    console.log(chrome.i18n.getUILanguage())
+    appheadername.innerText = chrome.i18n.getMessage("mostUsedAppName")
     $(appHeader).append(appheadername)
 
     let listui = document.createElement("ui")

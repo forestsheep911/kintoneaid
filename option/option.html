@@ -15,47 +15,48 @@
     <div id="op">
         <div class="all-block">
             <div id="bc1" class="switch" v-on:click="bt1">
-                <div class="content inactive">ユーザーアイコン拡大</div>
+                <div class="content inactive">{{ bigUserIconTitle }}</div>
                 <div class="button-wrapper">
                     <div id="big_icon_sw" class="button inactive">
-                        <div class="label">Enable</div>
+                        <div class="label">{{ enableName }}</div>
                         <div class="depth"></div>
                     </div>
                     <div class="button">
-                        <div class="label">Disable</div>
+                        <div class="label">{{ disableName }}</div>
                         <div class="depth"></div>
                     </div>
                 </div>
             </div>
             <div id="bc2" class="switch" v-on:click="bt2">
-                <div class="content inactive">簡易＠</div>
+                <div class="content inactive">{{ easyAtTitle }}</div>
                 <div class="button-wrapper">
                     <div id="easy_at_sw" class="button inactive">
-                        <div class="label">Enable</div>
+                        <div class="label">{{ enableName }}</div>
                         <div class="depth"></div>
                     </div>
                     <div class="button">
-                        <div class="label">Disable</div>
+                        <div class="label">{{ disableName }}</div>
                         <div class="depth"></div>
                     </div>
                 </div>
             </div>
             <div id="bc3" class="switch" v-on:click="bt3">
-                <div class="content inactive">よく使うアプリ</div>
+                <div class="content inactive">{{ mostUsedAppTitle }}</div>
                 <div class="button-wrapper">
                     <div id="most_app_sw" class="button inactive">
-                        <div class="label">Enable</div>
+                        <div class="label">{{ enableName }}</div>
                         <div class="depth"></div>
                     </div>
                     <div class="button">
-                        <div class="label">Disable</div>
+                        <div class="label">{{ disableName }}</div>
                         <div class="depth"></div>
                     </div>
                 </div>
             </div>
             <div class="option_text">
-                <span id="tc31" class="option_item_title inactive">最大表示数</span>
-                <input id="tc32" type="text" class="option_item_input inactive" v-model.number="config.most_app_num" v-on:change="tx1" :disabled="!config.most_app"></span>
+                <span id="tc31" class="option_item_title inactive">{{ maxMostUsedAppNumberTitle }}</span>
+                <input id="tc32" type="text" class="option_item_input inactive" v-model.number="config.most_app_num"
+                    v-on:change="tx1" :disabled="!config.most_app"></span>
             </div>
         </div>
     </div>

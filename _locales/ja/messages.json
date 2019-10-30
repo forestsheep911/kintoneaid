@@ -1,0 +1,26 @@
+{
+    "extName": {
+        "message": "kintone 援助"
+    },
+    "mostUsedAppName": {
+        "message": "よく使うアプリ"
+    },
+    "optionBigUserIconName": {
+        "message": "ユーザーアイコン拡大"
+    },
+    "optionEasyAtName": {
+        "message": "簡易@"
+    },
+    "optionMostUsedAppName": {
+        "message": "よく使うアプリ"
+    },
+    "optionMostUsedAppMaxName": {
+        "message": "最大表示数"
+    },
+    "enableName": {
+        "message": "有効"
+    },
+    "disableName": {
+        "message": "無効"
+    }
+}

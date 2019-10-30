@@ -1,0 +1,26 @@
+{
+    "extName": {
+        "message": "kintone aid"
+    },
+    "mostUsedAppName": {
+        "message": "Most Used App"
+    },
+    "optionBigUserIconName": {
+        "message": "Big User Icon"
+    },
+    "optionEasyAtName": {
+        "message": "Easy @"
+    },
+    "optionMostUsedAppName": {
+        "message": "Most Used App"
+    },
+    "optionMostUsedAppMaxName": {
+        "message": "Max number of apps"
+    },
+    "enableName": {
+        "message": "Enable"
+    },
+    "disableName": {
+        "message": "Disable"
+    }
+}
