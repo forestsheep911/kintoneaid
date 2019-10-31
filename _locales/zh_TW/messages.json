@@ -2,6 +2,9 @@
     "extName": {
         "message": "kintone 助手"
     },
+    "desName": {
+        "message": "kintone之非常有用的小工具"
+    },
     "mostUsedAppName": {
         "message": "最常用應用"
     },

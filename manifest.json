@@ -8,7 +8,7 @@
         ]
     },
     "default_locale": "en",
-    "description": "Very useful tools for kintone. -- I think.",
+    "description": "__MSG_desName__",
     "icons": {
         "16": "icon/t-16.png",
         "48": "icon/t-64.png",
@@ -46,5 +46,5 @@
         "tabs"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "version": "0.0.0.92"
+    "version": "0.0.0.93"
 }

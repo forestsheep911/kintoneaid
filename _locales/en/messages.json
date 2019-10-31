@@ -2,6 +2,9 @@
     "extName": {
         "message": "kintone aid"
     },
+    "desName": {
+        "message": "Very useful tools for kintone."
+    },
     "mostUsedAppName": {
         "message": "Most Used App"
     },
