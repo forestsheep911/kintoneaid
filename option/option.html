@@ -14,6 +14,19 @@
 <body>
     <div id="op">
         <div class="all-block">
+            <div id="bc4" class="switch" v-on:click="bt4">
+                <div class="content inactive">{{ customPortalTitle }}</div>
+                <div class="button-wrapper">
+                    <div id="cus_portal_sw" class="button inactive">
+                        <div class="label">{{ enableName }}</div>
+                        <div class="depth"></div>
+                    </div>
+                    <div class="button">
+                        <div class="label">{{ disableName }}</div>
+                        <div class="depth"></div>
+                    </div>
+                </div>
+            </div>
             <div id="bc1" class="switch" v-on:click="bt1">
                 <div class="content inactive">{{ bigUserIconTitle }}</div>
                 <div class="button-wrapper">

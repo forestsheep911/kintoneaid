@@ -20,6 +20,9 @@
     "optionMostUsedAppMaxName": {
         "message": "Max number of apps"
     },
+    "optionCustomPortalName": {
+        "message": "Customize Portal"
+    },
     "enableName": {
         "message": "Enable"
     },

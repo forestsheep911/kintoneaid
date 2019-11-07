@@ -1,0 +1,15 @@
+.max-min-block {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    width: 48px;
+    height: 48px;
+    background-image: url(chrome-extension://fddekggkcckafbhlmjkbmhilkodcnaao/icon/dup.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 24px 24px;
+}
+
+.max-min-block.puckered {
+    background-image: url(chrome-extension://fddekggkcckafbhlmjkbmhilkodcnaao/icon/ddown.png);
+}

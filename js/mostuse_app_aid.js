@@ -1,6 +1,6 @@
 let showApps = function (mostapp) {
     let bodyright = $.find('.ocean-portal-body-right')
-    console.log(bodyright)
+    // console.log(bodyright)
     let rp = document.createElement("div")
     rp.setAttribute("class", "ocean-portal-widget")
     rp.setAttribute("id", "mostusedapp")
@@ -17,12 +17,12 @@ let showApps = function (mostapp) {
 
     let appheadername = document.createElement("H3")
     appheadername.setAttribute("class", "gaia-argoui-widget-title")
-    chrome.i18n.getAcceptLanguages(function (result) {
-        for (i = 0; i < result.length; i++) {
-            console.log(result[i])
-        }
-    })
-    console.log(chrome.i18n.getUILanguage())
+    // chrome.i18n.getAcceptLanguages(function (result) {
+    //     for (i = 0; i < result.length; i++) {
+    //         console.log(result[i])
+    //     }
+    // })
+    // console.log(chrome.i18n.getUILanguage())
     appheadername.innerText = chrome.i18n.getMessage("mostUsedAppName")
     $(appHeader).append(appheadername)
 
@@ -44,22 +44,22 @@ let showApps = function (mostapp) {
     }
 }
 
-console.log("starting most used app")
+// console.log("starting most used app")
 
-setTimeout(() => {
-    if (document.getElementsByClassName('ocean-portal-body-right').length == 0) {
-        console.log("found not in portal")
-        return
-    }
-    console.log($('#mostusedapp'))
-    if ($('#mostusedapp').length > 0) {
-        console.log("already have mua")
-    } else {
-        console.log("no mua")
-        chrome.runtime.sendMessage(null, {
-            "mostusedapp": true
-        }, null, function (response) {
-            console.log(response)
-        })
-    }
-}, 700);
+// setTimeout(() => {
+//     if (document.getElementsByClassName('ocean-portal-body-right').length == 0) {
+//         console.log("found not in portal")
+//         return
+//     }
+//     console.log($('#mostusedapp'))
+//     if ($('#mostusedapp').length > 0) {
+//         console.log("already have mua")
+//     } else {
+//         console.log("no mua")
+//         chrome.runtime.sendMessage(null, {
+//             "mostusedapp": true
+//         }, null, function (response) {
+//             console.log(response)
+//         })
+//     }
+// }, 700);

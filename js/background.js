@@ -38,6 +38,25 @@ function isBigUserIconEnable(tab) {
     }
 }
 
+function isCustomizePortalEnable(tab) {
+    if (localStorage.config != null) {
+        let config = JSON.parse(localStorage.config)
+        let customizePortalEnable = config.cus_por ? true : false
+        chrome.tabs.sendMessage(tab.id, {
+            customize_portal_enable: customizePortalEnable
+        }, null, function (response) {
+            console.log(response)
+        })
+    } else {
+        chrome.tabs.sendMessage(tab.id, {
+            customize_portal_enable: true
+        }, null, function (response) {
+            console.log(response)
+        })
+        return
+    }
+}
+
 function doAfterCreated(tab) {
     // console.log(tab)
     let URLobj = new URL(tab.url)
@@ -178,5 +197,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log("start easy at")
         isEasyAtEnable(sender.tab)
         sendResponse("easy at request has been received. --by background")
+    }
+    if (message.customizeportal) {
+        console.log("start customize portal")
+        isCustomizePortalEnable(sender.tab)
+        sendResponse("customize portal request has been received. --by background")
     }
 })

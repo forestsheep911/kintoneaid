@@ -3,7 +3,7 @@
         "message": "kintone 助手"
     },
     "desName": {
-        "message": "定制化你的kintone主页"
+        "message": "定制化你的kintone首頁"
     },
     "mostUsedAppName": {
         "message": "最常用应用"
@@ -19,6 +19,9 @@
     },
     "optionMostUsedAppMaxName": {
         "message": "最多显示应用数"
+    },
+    "optionCustomPortalName": {
+        "message": "首页定制"
     },
     "enableName": {
         "message": "启用"

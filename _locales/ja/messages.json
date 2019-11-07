@@ -20,6 +20,9 @@
     "optionMostUsedAppMaxName": {
         "message": "最大表示数"
     },
+    "optionCustomPortalName": {
+        "message": "ポータルをカスタマイズする"
+    },
     "enableName": {
         "message": "有効"
     },
