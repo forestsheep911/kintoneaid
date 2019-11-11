@@ -52,7 +52,10 @@ function optionGo() {
         },
         methods: {
             saveconfig: function () {
-                localStorage.config = JSON.stringify(this.config)
+                // localStorage.config = JSON.stringify(this.config)
+                chrome.storage.sync.set({
+                    'config': JSON.stringify(this.config)
+                })
             },
             bt1: function (event) {
                 $('#bc1 .button').toggleClass('inactive')
@@ -81,6 +84,9 @@ function optionGo() {
                 this.saveconfig()
             },
             tx1: function (event) {
+                if (this.config.most_app_num == "") {
+                    this.config.most_app_num = 5
+                }
                 this.saveconfig()
             }
         }

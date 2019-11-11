@@ -342,11 +342,11 @@ window.onmessage = function (event) {
             })
 
             // test
-            let testField = {
-                student: "aaa"
-            }
-            this.localStorage.testField = JSON.stringify(testField)
-            chrome.localStorage.testField = JSON.stringify(testField)
+            // let testField = {
+            //     student: "aaa"
+            // }
+            // this.localStorage.testField = JSON.stringify(testField)
+            // chrome.localStorage.testField = JSON.stringify(testField)
         }
     }
 
