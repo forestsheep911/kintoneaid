@@ -1,3 +1,27 @@
+chrome.runtime.onInstalled.addListener(function (details) {
+    // console.log(details)
+    if (!localStorage.config) {
+        let configDefault = {
+            big_icon: true,
+            easy_at: true,
+            most_app: true,
+            cus_por: true
+        }
+        localStorage.config = JSON.stringify(configDefault)
+    }
+    if (!localStorage.pucker) {
+        let puckerDefault = {
+            announcement: false,
+            notification: false,
+            assigned: false,
+            space: false,
+            app: false,
+            most_app: false
+        }
+        localStorage.pucker = JSON.stringify(puckerDefault)
+    }
+})
+
 function isEasyAtEnable(tab) {
     if (localStorage.config != null) {
         let config = JSON.parse(localStorage.config)
@@ -39,22 +63,75 @@ function isBigUserIconEnable(tab) {
 }
 
 function isCustomizePortalEnable(tab) {
-    if (localStorage.config != null) {
+    if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
         let customizePortalEnable = config.cus_por ? true : false
+        let puckered = localStorage.pucker ? JSON.parse(localStorage.pucker) : {
+            announcement: false,
+            notification: false,
+            assigned: false,
+            space: false,
+            app: false,
+            most_app: false
+        }
         chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: customizePortalEnable
+            customize_portal_enable: customizePortalEnable,
+            pucker: puckered
         }, null, function (response) {
             console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: true
+            customize_portal_enable: true,
+            pucker: {
+                announcement: false,
+                notification: false,
+                assigned: false,
+                space: false,
+                app: false,
+                most_app: false
+            }
         }, null, function (response) {
             console.log(response)
         })
         return
     }
+}
+
+function saveAnnouncementPuckered(tab, isAnnPuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.announcement = isAnnPuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
+}
+
+function saveNotificationPuckered(tab, isNotiPuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.notification = isNotiPuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
+}
+
+function saveAssignedPuckered(tab, isAssignedPuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.assigned = isAssignedPuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
+}
+
+function saveSpacePuckered(tab, isSpacePuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.space = isSpacePuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
+}
+
+function saveAppPuckered(tab, isAppPuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.app = isAppPuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
+}
+
+function saveMostUsedAppPuckered(tab, isMostUsedAppPuckered) {
+    let puckerJson = JSON.parse(localStorage.pucker)
+    puckerJson.most_app = isMostUsedAppPuckered
+    localStorage.pucker = JSON.stringify(puckerJson)
 }
 
 function doAfterCreated(tab) {
@@ -102,6 +179,10 @@ function doAfterCreated(tab) {
 }
 
 function getMostUsedAppData(tab) {
+    // puckered
+    let puckered = JSON.parse(localStorage.pucker)
+    let mostAppPuckered = puckered ? puckered.most_app : false
+    console.log(puckered)
     // get on or off and maxnumber
     let maxCount
     if (localStorage.config != null) {
@@ -155,7 +236,8 @@ function getMostUsedAppData(tab) {
                 // console.log(readyToSendArray)
                 chrome.tabs.sendMessage(tab.id, {
                     most_used_app_enable: true,
-                    apps: readyToSendArray
+                    apps: readyToSendArray,
+                    puckered: mostAppPuckered
                 }, null, function (response) {
                     console.log(response)
                 })
@@ -202,5 +284,35 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log("start customize portal")
         isCustomizePortalEnable(sender.tab)
         sendResponse("customize portal request has been received. --by background")
+    }
+    if (message.saveAnnPuckered) {
+        console.log("start save Ann Puckered")
+        saveAnnouncementPuckered(sender.tab, message.value)
+        sendResponse("save Ann Puckered request has been received. --by background")
+    }
+    if (message.saveNotiPuckered) {
+        console.log("start save noti Puckered")
+        saveNotificationPuckered(sender.tab, message.value)
+        sendResponse("save noti Puckered request has been received. --by background")
+    }
+    if (message.saveAssignedPuckered) {
+        console.log("start save assigned Puckered")
+        saveAssignedPuckered(sender.tab, message.value)
+        sendResponse("save assigned Puckered request has been received. --by background")
+    }
+    if (message.saveSpacePuckered) {
+        console.log("start save space Puckered")
+        saveSpacePuckered(sender.tab, message.value)
+        sendResponse("save space Puckered request has been received. --by background")
+    }
+    if (message.saveAppPuckered) {
+        console.log("start save app Puckered")
+        saveAppPuckered(sender.tab, message.value)
+        sendResponse("save App Puckered request has been received. --by background")
+    }
+    if (message.saveMostAppPuckered) {
+        console.log("start save most used app Puckered")
+        saveMostUsedAppPuckered(sender.tab, message.value)
+        sendResponse("save most used app Puckered request has been received. --by background")
     }
 })
