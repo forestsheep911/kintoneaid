@@ -54,15 +54,16 @@ let showApps = function (mostapp, puckered) {
             invisibleButton.setAttribute("title", "收起")
             listui.style.display = "block"
         }
-        chrome.runtime.sendMessage(null, {
-            saveMostAppPuckered: true,
-            value: mostAppPuckered
-        }, null, function (response) {
-            console.log(response)
-        })
+        savePuckeredInfo("most_app", mostAppPuckered)
+        // chrome.runtime.sendMessage(null, {
+        //     saveMostAppPuckered: true,
+        //     value: mostAppPuckered
+        // }, null, function (response) {
+        //     console.log(response)
+        // })
     }
     appHeader.appendChild(invisibleButton)
-    if (puckered) {
+    if (loadPuckeredInfo("most_app")) {
         $(invisibleButton).toggleClass("puckered")
         invisibleButton.setAttribute("title", "展开")
         listui.style.display = "none"

@@ -92,12 +92,13 @@ function puckerAnnouncement(puckered) {
                 annBody.style.display = "block"
                 annFooter.style.display = "block"
             }
-            chrome.runtime.sendMessage(null, {
-                saveAnnPuckered: true,
-                value: annPuckered
-            }, null, function (response) {
-                console.log(response)
-            })
+            savePuckeredInfo("announcement", annPuckered)
+            // chrome.runtime.sendMessage(null, {
+            //     saveAnnPuckered: true,
+            //     value: annPuckered
+            // }, null, function (response) {
+            //     console.log(response)
+            // })
         }
         annHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -141,12 +142,13 @@ function puckerNotification(puckered) {
                 notiBody.style.display = "block"
                 notiFooter.style.display = "block"
             }
-            chrome.runtime.sendMessage(null, {
-                saveNotiPuckered: true,
-                value: notiPuckered
-            }, null, function (response) {
-                console.log(response)
-            })
+            savePuckeredInfo("notification", notiPuckered)
+            // chrome.runtime.sendMessage(null, {
+            //     saveNotiPuckered: true,
+            //     value: notiPuckered
+            // }, null, function (response) {
+            //     console.log(response)
+            // })
         }
         notiHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -180,12 +182,13 @@ function puckerAssigned(puckered) {
                 invisibleButton.setAttribute("title", "收起")
                 assBody.style.display = "block"
             }
-            chrome.runtime.sendMessage(null, {
-                saveAssignedPuckered: true,
-                value: assPuckered
-            }, null, function (response) {
-                console.log(response)
-            })
+            savePuckeredInfo("assinged", assPuckered)
+            // chrome.runtime.sendMessage(null, {
+            //     saveAssignedPuckered: true,
+            //     value: assPuckered
+            // }, null, function (response) {
+            //     console.log(response)
+            // })
         }
         assHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -222,12 +225,13 @@ function puckerSpace(puckered) {
                 spaceMenu.style.display = "block"
                 spaceBody.style.display = "block"
             }
-            chrome.runtime.sendMessage(null, {
-                saveSpacePuckered: true,
-                value: spacePuckered
-            }, null, function (response) {
-                console.log(response)
-            })
+            savePuckeredInfo("space", spacePuckered)
+            // chrome.runtime.sendMessage(null, {
+            //     saveSpacePuckered: true,
+            //     value: spacePuckered
+            // }, null, function (response) {
+            //     console.log(response)
+            // })
         }
         spaceHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -269,12 +273,13 @@ function puckerApp(puckered) {
                 appMenu.style.display = "block"
                 appBody.style.display = "block"
             }
-            chrome.runtime.sendMessage(null, {
-                saveAppPuckered: true,
-                value: appPuckered
-            }, null, function (response) {
-                console.log(response)
-            })
+            savePuckeredInfo("app", appPuckered)
+            // chrome.runtime.sendMessage(null, {
+            //     saveAppPuckered: true,
+            //     value: appPuckered
+            // }, null, function (response) {
+            //     console.log(response)
+            // })
         }
         appHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -292,8 +297,28 @@ function puckerApp(puckered) {
     }
 }
 
+// todo
+// save pucker info into localstorage(content script[HTML5's][by site])
+function savePuckeredInfo(field, boolValue) {
+    if (localStorage.kaidPuckered) {
+        let puckerJson = JSON.parse(localStorage.kaidPuckered)
+        puckerJson[field] = boolValue
+        localStorage.kaidPuckered = JSON.stringify(puckerJson)
+    } else {
+        let jsonPass = {}
+        jsonPass[field] = boolValue
+        localStorage.kaidPuckered = JSON.stringify(jsonPass)
+    }
+}
+
+function loadPuckeredInfo(field) {
+    let puckeredInfo = JSON.parse(localStorage.kaidPuckered ? localStorage.kaidPuckered : "{}")
+    console.log(puckeredInfo ? puckeredInfo[field] ? true : false : false)
+    return puckeredInfo ? puckeredInfo[field] ? true : false : false
+}
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    console.log(message)
+    // console.log(message)
     if (message.big_user_icon_enable) {
         sendResponse("bigusericon has been recived")
         setTimeout(photoinject, 2000)
@@ -302,18 +327,18 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         setTimeout(atinject, 2200)
     } else if (message.most_used_app_enable) {
         sendResponse("most use app list has been recived")
-        console.log(message)
         showApps(message.apps, message.puckered)
     } else if (message.customize_portal_enable) {
         sendResponse("customize portal has been recived")
-        console.log(message)
         regionLinkUp()
         optionButtonUp()
-        puckerAnnouncement(message.pucker.announcement)
-        puckerNotification(message.pucker.notification)
-        puckerAssigned(message.pucker.assigned)
-        puckerSpace(message.pucker.space)
-        puckerApp(message.pucker.app)
+        // todo
+        // get pucker info from localstorage(content script[HTML5's][by site])
+        puckerAnnouncement(loadPuckeredInfo("announcement"))
+        puckerNotification(loadPuckeredInfo("notification"))
+        puckerAssigned(loadPuckeredInfo("assigned"))
+        puckerSpace(loadPuckeredInfo("apspacep"))
+        puckerApp(loadPuckeredInfo("app"))
     } else {
         sendResponse("none of my bussiness -- by event reg")
     }
@@ -340,13 +365,6 @@ window.onmessage = function (event) {
             }, null, function (response) {
                 console.log(response)
             })
-
-            // test
-            // let testField = {
-            //     student: "aaa"
-            // }
-            // this.localStorage.testField = JSON.stringify(testField)
-            // chrome.localStorage.testField = JSON.stringify(testField)
         }
     }
 
