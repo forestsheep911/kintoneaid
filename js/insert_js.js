@@ -2,7 +2,7 @@ let s = document.createElement('script');
 s.src = chrome.extension.getURL('js/ij.js');
 s.onload = function () {
     setTimeout(() => {
-        console.log(this)
+        // console.log(this)
         this.parentNode.removeChild(this);
     }, 20000);
 };

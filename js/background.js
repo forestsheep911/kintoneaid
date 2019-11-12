@@ -1,26 +1,14 @@
 chrome.runtime.onInstalled.addListener(function (details) {
     // console.log(details)
     if (!localStorage.config) {
-        let configDefault = {
+        localStorage.config = JSON.stringify({
+            cus_por: true,
             big_icon: true,
             easy_at: true,
             most_app: true,
-            cus_por: true
-        }
-        localStorage.config = JSON.stringify(configDefault)
+            most_app_num: 5
+        })
     }
-    if (!localStorage.pucker) {
-        let puckerDefault = {
-            announcement: false,
-            notification: false,
-            assigned: false,
-            space: false,
-            app: false,
-            most_app: false
-        }
-        localStorage.pucker = JSON.stringify(puckerDefault)
-    }
-    //
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         for (let key in changes) {
@@ -82,86 +70,26 @@ function isCustomizePortalEnable(tab) {
     if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
         let customizePortalEnable = config.cus_por ? true : false
-        let puckered = localStorage.pucker ? JSON.parse(localStorage.pucker) : {
-            announcement: false,
-            notification: false,
-            assigned: false,
-            space: false,
-            app: false,
-            most_app: false
-        }
         chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: customizePortalEnable,
-            pucker: puckered
+            customize_portal_enable: customizePortalEnable
         }, null, function (response) {
             console.log(response)
         })
     } else {
-        chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: true,
-            pucker: {
-                announcement: false,
-                notification: false,
-                assigned: false,
-                space: false,
-                app: false,
-                most_app: false
-            }
-        }, null, function (response) {
+        chrome.tabs.sendMessage(tab.id, {}, null, function (response) {
             console.log(response)
         })
         return
     }
 }
 
-function saveAnnouncementPuckered(tab, isAnnPuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.announcement = isAnnPuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
-function saveNotificationPuckered(tab, isNotiPuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.notification = isNotiPuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
-function saveAssignedPuckered(tab, isAssignedPuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.assigned = isAssignedPuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
-function saveSpacePuckered(tab, isSpacePuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.space = isSpacePuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
-function saveAppPuckered(tab, isAppPuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.app = isAppPuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
-function saveMostUsedAppPuckered(tab, isMostUsedAppPuckered) {
-    let puckerJson = JSON.parse(localStorage.pucker)
-    puckerJson.most_app = isMostUsedAppPuckered
-    localStorage.pucker = JSON.stringify(puckerJson)
-}
-
 function doAfterCreated(tab) {
-    // console.log(tab)
     let URLobj = new URL(tab.url)
-    // console.log(URLobj)
-    // console.log(URLobj.pathname)
     let ptn = new RegExp(/^\/k\/\d+\/$/g)
-    let matchReg
-    if ((matchReg = ptn.exec(URLobj.pathname)) != null) {
-        // console.log(matchReg)
+    // let matchReg
+    if ((ptn.exec(URLobj.pathname)) != null) {
         openDB().then(function (promiseValue) {
             let dbobj = promiseValue
-            // console.log(dbobj)
             let trans = dbobj.transaction(["mostuseapp"], "readwrite")
             let objectStore = trans.objectStore("mostuseapp")
 
@@ -178,8 +106,7 @@ function doAfterCreated(tab) {
                 }
                 let requestput = objectStore.put(putdata)
                 requestput.onsuccess = e => {
-                    let obj = e.target.result
-                    // console.log(obj)
+                    // let obj = e.target.result
                 }
                 requestget.onerror = e => {
                     // console.log(e)
@@ -211,26 +138,18 @@ function getMostUsedAppData(tab) {
     }
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
-        // console.log(dbobj)
         let trans = dbobj.transaction(["mostuseapp"], "readwrite")
         let objectStore = trans.objectStore("mostuseapp")
         let ind = objectStore.index("viewtimes")
         let xx = {}
         let readyToSendArray = []
-        // console.log(tab)
         let senderUrlObj = new URL(tab.url)
-        // console.log(senderUrlObj)
-        // console.log(senderUrlObj.host)
 
         ind.openCursor(null, "prev").onsuccess = e => {
             var cursor = event.target.result
             if (cursor) {
-                // let apphref = cursor.value.apphref
-                // xx[apphref] = cursor.value.appname
                 xx.apphref = cursor.value.apphref
                 let xxUrlObj = new URL(xx.apphref)
-                // console.log(xxUrlObj)
-                // console.log(xxUrlObj.host)
                 xx.appname = cursor.value.appname
                 xx.viewtimes = cursor.value.viewtimes
                 if (senderUrlObj.host == xxUrlObj.host) {
@@ -240,7 +159,6 @@ function getMostUsedAppData(tab) {
                 cursor.continue()
             } else {
                 // no more results
-                // console.log(readyToSendArray)
                 let c = 0
                 for (var i in readyToSendArray) {
                     c++
@@ -263,14 +181,7 @@ function getMostUsedAppData(tab) {
 }
 
 chrome.runtime.onInstalled.addListener(function (details) {
-    if (!localStorage.config) {
-        localStorage.config = JSON.stringify({
-            big_icon: true,
-            easy_at: true,
-            most_app: true,
-            most_app_num: 5
-        })
-    }
+
 })
 
 chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
@@ -300,35 +211,5 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         console.log("start customize portal")
         isCustomizePortalEnable(sender.tab)
         sendResponse("customize portal request has been received. --by background")
-    }
-    if (message.saveAnnPuckered) {
-        console.log("start save Ann Puckered")
-        saveAnnouncementPuckered(sender.tab, message.value)
-        sendResponse("save Ann Puckered request has been received. --by background")
-    }
-    if (message.saveNotiPuckered) {
-        console.log("start save noti Puckered")
-        saveNotificationPuckered(sender.tab, message.value)
-        sendResponse("save noti Puckered request has been received. --by background")
-    }
-    if (message.saveAssignedPuckered) {
-        console.log("start save assigned Puckered")
-        saveAssignedPuckered(sender.tab, message.value)
-        sendResponse("save assigned Puckered request has been received. --by background")
-    }
-    if (message.saveSpacePuckered) {
-        console.log("start save space Puckered")
-        saveSpacePuckered(sender.tab, message.value)
-        sendResponse("save space Puckered request has been received. --by background")
-    }
-    if (message.saveAppPuckered) {
-        console.log("start save app Puckered")
-        saveAppPuckered(sender.tab, message.value)
-        sendResponse("save App Puckered request has been received. --by background")
-    }
-    if (message.saveMostAppPuckered) {
-        console.log("start save most used app Puckered")
-        saveMostUsedAppPuckered(sender.tab, message.value)
-        sendResponse("save most used app Puckered request has been received. --by background")
     }
 })

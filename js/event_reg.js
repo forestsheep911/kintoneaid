@@ -14,26 +14,24 @@ window.onhashchange = () => {
         chrome.runtime.sendMessage(null, {
             "easyat": true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         // big user icon
         console.log("start big user icon inject in hash change")
         chrome.runtime.sendMessage(null, {
             "bigusericon": true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     }, 1400)
 }
 
 function regionLinkUp() {
     // region link move to up
-    console.log("regionlinkup")
+    // console.log("regionlinkup")
     try {
         let regionLink = this.document.getElementsByClassName("kintone-portal-content-space")[0]
-        console.log(regionLink)
         let regionLinkHrefs = regionLink.getElementsByTagName("a")
-        console.log(regionLinkHrefs)
         // change style
         regionLink.style.float = "left"
         regionLink.style.color = "#ffffff"
@@ -93,12 +91,6 @@ function puckerAnnouncement(puckered) {
                 annFooter.style.display = "block"
             }
             savePuckeredInfo("announcement", annPuckered)
-            // chrome.runtime.sendMessage(null, {
-            //     saveAnnPuckered: true,
-            //     value: annPuckered
-            // }, null, function (response) {
-            //     console.log(response)
-            // })
         }
         annHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -109,7 +101,6 @@ function puckerAnnouncement(puckered) {
         }
         // Announcement edit button position
         let annEditButton = this.document.getElementsByClassName("ocean-portal-announcement-edit")
-        console.log(annEditButton)
         annEditButton[0].style.right = "48px"
     } catch (error) {
         // console.error(error)
@@ -143,17 +134,12 @@ function puckerNotification(puckered) {
                 notiFooter.style.display = "block"
             }
             savePuckeredInfo("notification", notiPuckered)
-            // chrome.runtime.sendMessage(null, {
-            //     saveNotiPuckered: true,
-            //     value: notiPuckered
-            // }, null, function (response) {
-            //     console.log(response)
-            // })
         }
         notiHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.setAttribute("title", "展开")
+            notiMenu.style.display = "none"
             notiBody.style.display = "none"
             notiFooter.style.display = "none"
         }
@@ -182,13 +168,7 @@ function puckerAssigned(puckered) {
                 invisibleButton.setAttribute("title", "收起")
                 assBody.style.display = "block"
             }
-            savePuckeredInfo("assinged", assPuckered)
-            // chrome.runtime.sendMessage(null, {
-            //     saveAssignedPuckered: true,
-            //     value: assPuckered
-            // }, null, function (response) {
-            //     console.log(response)
-            // })
+            savePuckeredInfo("assigned", assPuckered)
         }
         assHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -204,7 +184,6 @@ function puckerAssigned(puckered) {
 function puckerSpace(puckered) {
     try {
         let space = this.document.getElementsByClassName("ocean-portal-space")[0]
-        console.log(space)
         let spaceHeader = space.getElementsByClassName("gaia-argoui-widget-header")[0]
         let spaceMenu = space.getElementsByClassName("gaia-argoui-widget-menu")[0]
         let spaceBody = space.getElementsByClassName("gaia-argoui-widget-body")[0]
@@ -226,12 +205,6 @@ function puckerSpace(puckered) {
                 spaceBody.style.display = "block"
             }
             savePuckeredInfo("space", spacePuckered)
-            // chrome.runtime.sendMessage(null, {
-            //     saveSpacePuckered: true,
-            //     value: spacePuckered
-            // }, null, function (response) {
-            //     console.log(response)
-            // })
         }
         spaceHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -242,7 +215,6 @@ function puckerSpace(puckered) {
         }
         // Announcement edit button position
         let spaceAddButton = this.document.getElementsByClassName("ocean-portal-spacelist-newspace")
-        console.log(spaceAddButton)
         spaceAddButton[0].style.right = "48px"
     } catch (error) {
         // console.error(error)
@@ -252,7 +224,6 @@ function puckerSpace(puckered) {
 function puckerApp(puckered) {
     try {
         let app = this.document.getElementsByClassName("ocean-portal-app")[0]
-        console.log(app)
         let appHeader = app.getElementsByClassName("gaia-argoui-widget-header")[0]
         let appMenu = app.getElementsByClassName("gaia-argoui-widget-menu")[0]
         let appBody = app.getElementsByClassName("gaia-argoui-widget-body")[0]
@@ -274,12 +245,6 @@ function puckerApp(puckered) {
                 appBody.style.display = "block"
             }
             savePuckeredInfo("app", appPuckered)
-            // chrome.runtime.sendMessage(null, {
-            //     saveAppPuckered: true,
-            //     value: appPuckered
-            // }, null, function (response) {
-            //     console.log(response)
-            // })
         }
         appHeader.appendChild(invisibleButton)
         if (puckered) {
@@ -290,7 +255,6 @@ function puckerApp(puckered) {
         }
         // Announcement edit button position
         let appAddButton = this.document.getElementsByClassName("ocean-portal-applist-newapp")
-        console.log(appAddButton)
         appAddButton[0].style.right = "48px"
     } catch (error) {
         // console.error(error)
@@ -313,7 +277,6 @@ function savePuckeredInfo(field, boolValue) {
 
 function loadPuckeredInfo(field) {
     let puckeredInfo = JSON.parse(localStorage.kaidPuckered ? localStorage.kaidPuckered : "{}")
-    console.log(puckeredInfo ? puckeredInfo[field] ? true : false : false)
     return puckeredInfo ? puckeredInfo[field] ? true : false : false
 }
 
@@ -337,7 +300,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         puckerAnnouncement(loadPuckeredInfo("announcement"))
         puckerNotification(loadPuckeredInfo("notification"))
         puckerAssigned(loadPuckeredInfo("assigned"))
-        puckerSpace(loadPuckeredInfo("apspacep"))
+        puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
     } else {
         sendResponse("none of my bussiness -- by event reg")
@@ -356,14 +319,14 @@ window.onmessage = function (event) {
                 chrome.runtime.sendMessage(null, {
                     "mostusedapp": true
                 }, null, function (response) {
-                    console.log(response)
+                    // console.log(response)
                 })
             }
             // customize portal
             chrome.runtime.sendMessage(null, {
                 "customizeportal": true
             }, null, function (response) {
-                console.log(response)
+                // console.log(response)
             })
         }
     }

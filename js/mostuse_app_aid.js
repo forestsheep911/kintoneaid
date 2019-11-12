@@ -55,12 +55,6 @@ let showApps = function (mostapp, puckered) {
             listui.style.display = "block"
         }
         savePuckeredInfo("most_app", mostAppPuckered)
-        // chrome.runtime.sendMessage(null, {
-        //     saveMostAppPuckered: true,
-        //     value: mostAppPuckered
-        // }, null, function (response) {
-        //     console.log(response)
-        // })
     }
     appHeader.appendChild(invisibleButton)
     if (loadPuckeredInfo("most_app")) {
