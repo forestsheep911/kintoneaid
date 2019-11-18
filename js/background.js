@@ -24,7 +24,49 @@ chrome.runtime.onInstalled.addListener(function (details) {
             }
         }
     })
+
+    chrome.webRequest.onBeforeRequest.addListener(
+        function (details) {
+            console.log(details)
+            // console.log(details.requestBody.raw)
+            // console.log(details.requestBody.raw[0].bytes)
+            // let dataView = new DataView(details.requestBody.raw[0].bytes)
+            let nstString = ab2str(details.requestBody.raw[0].bytes)
+            console.log(nstString)
+            chrome.tabs.get(details.tabId, function (tab) {
+                console.log(tab)
+            })
+        }, {
+            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+        },
+        ["requestBody"]
+    )
+
+    //     chrome.webRequest.onCompleted.addListener(
+    //         function (details) {
+    //             // console.log(details)
+    //             // console.log(details.url)
+    //             let postUrl = new URL(details.url)
+    //             // console.log(postUrl)
+    //             // console.log(postUrl.searchParams.get("_ref"))
+
+    //             // console.log(details.requestBody.raw[0].bytes)
+    //             // let dataView = new DataView(details.requestBody.raw[0].bytes)
+    //             // let nstString = ab2str(details.requestBody.raw[0].bytes)
+    //             // console.log(nstString)
+    //             chrome.tabs.get(details.tabId, function (tab) {
+    //                 // console.log(tab)
+    //             })
+    //         }, {
+    //             urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+    //         },
+    //         ["responseHeaders"]
+    //     )
 })
+
+function ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf))
+}
 
 function isEasyAtEnable(tab) {
     if (localStorage.config != null) {
@@ -179,10 +221,6 @@ function getMostUsedAppData(tab) {
         }
     })
 }
-
-chrome.runtime.onInstalled.addListener(function (details) {
-
-})
 
 chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
     if (changeInfo.status && changeInfo.status == "complete") {

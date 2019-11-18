@@ -26,6 +26,13 @@ window.onhashchange = () => {
     }, 1400)
 }
 
+// test
+
+
+// script.parentNode.removeChild(script);
+
+// end test
+
 function regionLinkUp() {
     // region link move to up
     // console.log("regionlinkup")
