@@ -45,10 +45,10 @@
     }],
     "web_accessible_resources": [
         "js/ij.js",
-        "icon/*"
+        "icon/ddown.png",
+        "icon/dup.png"
     ],
     "permissions": [
-        "activeTab",
         "tabs"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
