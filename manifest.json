@@ -45,16 +45,12 @@
     }],
     "web_accessible_resources": [
         "js/ij.js",
-        "js/detect_post.js",
-        "icon/*"
+        "icon/ddown.png",
+        "icon/dup.png"
     ],
     "permissions": [
-        "activeTab",
         "tabs",
-        "storage",
-        "webRequest",
-        "https://*.cybozu.com/k/*",
-        "https://*.cybozu.cn/k/*"
+        "storage"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "version": "0.0.0.95"

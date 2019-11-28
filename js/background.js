@@ -13,55 +13,22 @@ chrome.runtime.onInstalled.addListener(function (details) {
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         for (let key in changes) {
             let storageChange = changes[key]
-            // console.log('Storage key "%s" in namespace "%s" changed. ' +
-            //     'Old value was "%s", new value is "%s".',
-            //     key,
-            //     namespace,
-            //     storageChange.oldValue,
-            //     storageChange.newValue);
             if (key == "config") {
                 localStorage.config = storageChange.newValue
             }
         }
     })
 
-    chrome.webRequest.onBeforeRequest.addListener(
-        function (details) {
-            console.log(details)
-            // console.log(details.requestBody.raw)
-            // console.log(details.requestBody.raw[0].bytes)
-            // let dataView = new DataView(details.requestBody.raw[0].bytes)
-            let nstString = ab2str(details.requestBody.raw[0].bytes)
-            console.log(nstString)
-            chrome.tabs.get(details.tabId, function (tab) {
-                console.log(tab)
-            })
-        }, {
-            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
-        },
-        ["requestBody"]
-    )
-
-    //     chrome.webRequest.onCompleted.addListener(
-    //         function (details) {
-    //             // console.log(details)
-    //             // console.log(details.url)
-    //             let postUrl = new URL(details.url)
-    //             // console.log(postUrl)
-    //             // console.log(postUrl.searchParams.get("_ref"))
-
-    //             // console.log(details.requestBody.raw[0].bytes)
-    //             // let dataView = new DataView(details.requestBody.raw[0].bytes)
-    //             // let nstString = ab2str(details.requestBody.raw[0].bytes)
-    //             // console.log(nstString)
-    //             chrome.tabs.get(details.tabId, function (tab) {
-    //                 // console.log(tab)
-    //             })
-    //         }, {
-    //             urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
-    //         },
-    //         ["responseHeaders"]
-    //     )
+    // chrome.webRequest.onBeforeRequest.addListener(
+    //     function (details) {
+    //         let nstString = ab2str(details.requestBody.raw[0].bytes)
+    //         // console.log(nstString)
+    //         chrome.tabs.get(details.tabId, function (tab) {})
+    //     }, {
+    //         urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+    //     },
+    //     ["requestBody"]
+    // )
 })
 
 function ab2str(buf) {
@@ -76,13 +43,13 @@ function isEasyAtEnable(tab) {
         chrome.tabs.sendMessage(tab.id, {
             easy_at_enable: easyAtEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {
             easy_at_enable: true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         return
     }
@@ -96,13 +63,13 @@ function isBigUserIconEnable(tab) {
         chrome.tabs.sendMessage(tab.id, {
             big_user_icon_enable: bigUserIconEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {
             big_user_icon_enable: true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         return
     }
@@ -115,11 +82,11 @@ function isCustomizePortalEnable(tab) {
         chrome.tabs.sendMessage(tab.id, {
             customize_portal_enable: customizePortalEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {}, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         return
     }
@@ -167,7 +134,7 @@ function getMostUsedAppData(tab) {
     // puckered
     let puckered = JSON.parse(localStorage.pucker)
     let mostAppPuckered = puckered ? puckered.most_app : false
-    console.log(puckered)
+    // console.log(puckered)
     // get on or off and maxnumber
     let maxCount
     if (localStorage.config != null) {
@@ -215,7 +182,7 @@ function getMostUsedAppData(tab) {
                     apps: readyToSendArray,
                     puckered: mostAppPuckered
                 }, null, function (response) {
-                    console.log(response)
+                    // console.log(response)
                 })
             }
         }
@@ -229,24 +196,24 @@ chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
 })
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    console.log(message)
+    // console.log(message)
     if (message.mostusedapp) {
-        console.log("start most used app")
+        // console.log("start most used app")
         getMostUsedAppData(sender.tab)
         sendResponse("most used app request has been received. --by background")
     }
     if (message.bigusericon) {
-        console.log("start big user icon")
+        // console.log("start big user icon")
         isBigUserIconEnable(sender.tab)
         sendResponse("big user icon request has been received. --by background")
     }
     if (message.easyat) {
-        console.log("start easy at")
+        // console.log("start easy at")
         isEasyAtEnable(sender.tab)
         sendResponse("easy at request has been received. --by background")
     }
     if (message.customizeportal) {
-        console.log("start customize portal")
+        // console.log("start customize portal")
         isCustomizePortalEnable(sender.tab)
         sendResponse("customize portal request has been received. --by background")
     }

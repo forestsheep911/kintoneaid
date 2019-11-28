@@ -115,10 +115,6 @@ function doloop(finduserhref, isNoti) {
     }
 }
 
-console.log("starting easy at")
-
 chrome.runtime.sendMessage(null, {
     "easyat": true
-}, null, function (response) {
-    console.log(response)
-})
+}, null, function (response) {})

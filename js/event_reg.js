@@ -1,9 +1,9 @@
 window.onload = function () {
-    console.log("after onload")
+    // console.log("after onload")
 }
 
 window.addEventListener('popstate', function (e) {
-    console.log("popstate")
+    // console.log("popstate")
 })
 
 window.onhashchange = () => {
@@ -13,29 +13,17 @@ window.onhashchange = () => {
         console.log("start easy at inject in hash change")
         chrome.runtime.sendMessage(null, {
             "easyat": true
-        }, null, function (response) {
-            // console.log(response)
-        })
+        }, null, function (response) {})
         // big user icon
         console.log("start big user icon inject in hash change")
         chrome.runtime.sendMessage(null, {
             "bigusericon": true
-        }, null, function (response) {
-            // console.log(response)
-        })
+        }, null, function (response) {})
     }, 1400)
 }
 
-// test
-
-
-// script.parentNode.removeChild(script);
-
-// end test
-
 function regionLinkUp() {
     // region link move to up
-    // console.log("regionlinkup")
     try {
         let regionLink = this.document.getElementsByClassName("kintone-portal-content-space")[0]
         let regionLinkHrefs = regionLink.getElementsByTagName("a")
