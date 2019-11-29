@@ -285,7 +285,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         setTimeout(atinject, 2200)
     } else if (message.most_used_app_enable) {
         sendResponse("most use app list has been recived")
-        showApps(message.apps, message.puckered)
+        showApps(message.apps)
     } else if (message.customize_portal_enable) {
         sendResponse("customize portal has been recived")
         regionLinkUp()
@@ -297,6 +297,31 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         puckerAssigned(loadPuckeredInfo("assigned"))
         puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
+    } else if (message.commentResult) {
+        console.log("commentResult recived")
+        let commentText = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
+        console.log(commentText)
+        if (commentText.length > 0) {
+            console.log(commentText[0].innerHTML)
+        }
+        // let commentBlock1s = document.getElementsByClassName("ocean-ui-comments-commentbase")
+        // console.log(commentBlock1s)
+        // if (commentBlock1s.length > 0) {
+        //     console.log(commentBlock1s[0])
+        // }
+        // let commentBlock2s = document.getElementsByClassName("ocean-ui-comments-post")
+        // console.log(commentBlock2s)
+        // if (commentBlock2s.length > 0) {
+        //     console.log(commentBlock2s[0])
+        // }
+        //ocean-ui-comments-commentbase ocean-ui-comments-post ocean-ui-comments-post-id-2162679
+        let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
+        console.log(commentTimes)
+        if (commentTimes.length > 0) {
+            console.log(commentTimes[0].children)
+            console.log(commentTimes[0].children[0].href)
+        }
+        sendResponse("commentResult -- by event reg")
     } else {
         sendResponse("none of my bussiness -- by event reg")
     }

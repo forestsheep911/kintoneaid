@@ -1,4 +1,4 @@
-let showApps = function (mostapp, puckered) {
+let showApps = function (mostapp) {
     let bodyright = $.find('.ocean-portal-body-right')
     // console.log(bodyright)
     let rp = document.createElement("div")

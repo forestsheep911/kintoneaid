@@ -19,16 +19,34 @@ chrome.runtime.onInstalled.addListener(function (details) {
         }
     })
 
-    // chrome.webRequest.onBeforeRequest.addListener(
-    //     function (details) {
-    //         let nstString = ab2str(details.requestBody.raw[0].bytes)
-    //         // console.log(nstString)
-    //         chrome.tabs.get(details.tabId, function (tab) {})
-    //     }, {
-    //         urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
-    //     },
-    //     ["requestBody"]
-    // )
+    chrome.webRequest.onBeforeRequest.addListener(
+        function (details) {
+            console.log(details)
+            let nstString = ab2str(details.requestBody.raw[0].bytes)
+            console.log(nstString)
+            chrome.tabs.get(details.tabId, function (tab) {
+                console.log(tab)
+            })
+        }, {
+            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+        },
+        ["requestBody"]
+    )
+
+    chrome.webRequest.onCompleted.addListener(
+        function (details) {
+            console.log(details)
+            chrome.tabs.get(details.tabId, function (tab) {
+                console.log(tab)
+                chrome.tabs.sendMessage(tab.id, {
+                    commentResult: true
+                }, null, function (response) {})
+            })
+        }, {
+            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+        },
+        ["responseHeaders"]
+    )
 })
 
 function ab2str(buf) {
@@ -132,8 +150,8 @@ function doAfterCreated(tab) {
 
 function getMostUsedAppData(tab) {
     // puckered
-    let puckered = JSON.parse(localStorage.pucker)
-    let mostAppPuckered = puckered ? puckered.most_app : false
+    // let puckered = JSON.parse(localStorage.pucker)
+    // let mostAppPuckered = puckered ? puckered.most_app : false
     // console.log(puckered)
     // get on or off and maxnumber
     let maxCount
@@ -179,8 +197,7 @@ function getMostUsedAppData(tab) {
                 // console.log(readyToSendArray)
                 chrome.tabs.sendMessage(tab.id, {
                     most_used_app_enable: true,
-                    apps: readyToSendArray,
-                    puckered: mostAppPuckered
+                    apps: readyToSendArray
                 }, null, function (response) {
                     // console.log(response)
                 })
