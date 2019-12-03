@@ -17,15 +17,10 @@ let showApps = function (mostapp) {
 
     let appheadername = document.createElement("H3")
     appheadername.setAttribute("class", "gaia-argoui-widget-title")
-    // chrome.i18n.getAcceptLanguages(function (result) {
-    //     for (i = 0; i < result.length; i++) {
-    //         console.log(result[i])
-    //     }
-    // })
-    // console.log(chrome.i18n.getUILanguage())
     appheadername.innerText = chrome.i18n.getMessage("mostUsedAppName")
     $(appHeader).append(appheadername)
 
+    //list
     let listui = document.createElement("ui")
     listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
     $(appList).append(listui)
@@ -42,24 +37,35 @@ let showApps = function (mostapp) {
         bspan1.innerText = mostapp[i].appname + "(" + mostapp[i].viewtimes + ")"
         $(b1).append(bspan1)
     }
+
+    // pucker button
+    let invisibleButton = document.createElement("a")
+    invisibleButton.style.backgroundImage = unPuckeredImgUrl
+    invisibleButton.setAttribute("title", "收起")
+    invisibleButton.setAttribute("class", "max-min-block")
+    invisibleButton.onclick = () => {
+        let mostAppPuckered
+        $(invisibleButton).toggleClass("puckered")
+        if ($(invisibleButton).hasClass('puckered')) {
+            mostAppPuckered = true
+            invisibleButton.style.backgroundImage = puckeredImgUrl
+            invisibleButton.setAttribute("title", "展开")
+            listui.style.display = "none"
+        } else {
+            mostAppPuckered = false
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
+            invisibleButton.setAttribute("title", "收起")
+            listui.style.display = "block"
+        }
+        savePuckeredInfo("most_app", mostAppPuckered)
+    }
+    appHeader.appendChild(invisibleButton)
+    if (loadPuckeredInfo("most_app")) {
+        $(invisibleButton).toggleClass("puckered")
+        invisibleButton.style.backgroundImage = puckeredImgUrl
+        invisibleButton.setAttribute("title", "展开")
+        listui.style.display = "none"
+    } else {
+        invisibleButton.style.backgroundImage = unPuckeredImgUrl
+    }
 }
-
-// console.log("starting most used app")
-
-// setTimeout(() => {
-//     if (document.getElementsByClassName('ocean-portal-body-right').length == 0) {
-//         console.log("found not in portal")
-//         return
-//     }
-//     console.log($('#mostusedapp'))
-//     if ($('#mostusedapp').length > 0) {
-//         console.log("already have mua")
-//     } else {
-//         console.log("no mua")
-//         chrome.runtime.sendMessage(null, {
-//             "mostusedapp": true
-//         }, null, function (response) {
-//             console.log(response)
-//         })
-//     }
-// }, 700);

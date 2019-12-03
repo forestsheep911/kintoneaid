@@ -226,10 +226,6 @@ function photoinject() {
     }
 }
 
-console.log("starting big user icon")
-
 chrome.runtime.sendMessage(null, {
     "bigusericon": true
-}, null, function (response) {
-    console.log(response)
-})
+}, null, function (response) {})

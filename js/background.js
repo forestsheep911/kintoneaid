@@ -1,3 +1,40 @@
+chrome.runtime.onInstalled.addListener(function (details) {
+    // console.log(details)
+    if (!localStorage.config) {
+        localStorage.config = JSON.stringify({
+            cus_por: true,
+            big_icon: true,
+            easy_at: true,
+            most_app: true,
+            most_app_num: 5
+        })
+    }
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+        for (let key in changes) {
+            let storageChange = changes[key]
+            if (key == "config") {
+                localStorage.config = storageChange.newValue
+            }
+        }
+    })
+
+    // chrome.webRequest.onBeforeRequest.addListener(
+    //     function (details) {
+    //         let nstString = ab2str(details.requestBody.raw[0].bytes)
+    //         // console.log(nstString)
+    //         chrome.tabs.get(details.tabId, function (tab) {})
+    //     }, {
+    //         urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+    //     },
+    //     ["requestBody"]
+    // )
+})
+
+function ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf))
+}
+
 function isEasyAtEnable(tab) {
     if (localStorage.config != null) {
         let config = JSON.parse(localStorage.config)
@@ -6,13 +43,13 @@ function isEasyAtEnable(tab) {
         chrome.tabs.sendMessage(tab.id, {
             easy_at_enable: easyAtEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {
             easy_at_enable: true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         return
     }
@@ -26,49 +63,42 @@ function isBigUserIconEnable(tab) {
         chrome.tabs.sendMessage(tab.id, {
             big_user_icon_enable: bigUserIconEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
         chrome.tabs.sendMessage(tab.id, {
             big_user_icon_enable: true
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
         return
     }
 }
 
 function isCustomizePortalEnable(tab) {
-    if (localStorage.config != null) {
+    if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
         let customizePortalEnable = config.cus_por ? true : false
         chrome.tabs.sendMessage(tab.id, {
             customize_portal_enable: customizePortalEnable
         }, null, function (response) {
-            console.log(response)
+            // console.log(response)
         })
     } else {
-        chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: true
-        }, null, function (response) {
-            console.log(response)
+        chrome.tabs.sendMessage(tab.id, {}, null, function (response) {
+            // console.log(response)
         })
         return
     }
 }
 
 function doAfterCreated(tab) {
-    // console.log(tab)
     let URLobj = new URL(tab.url)
-    // console.log(URLobj)
-    // console.log(URLobj.pathname)
     let ptn = new RegExp(/^\/k\/\d+\/$/g)
-    let matchReg
-    if ((matchReg = ptn.exec(URLobj.pathname)) != null) {
-        // console.log(matchReg)
+    // let matchReg
+    if ((ptn.exec(URLobj.pathname)) != null) {
         openDB().then(function (promiseValue) {
             let dbobj = promiseValue
-            // console.log(dbobj)
             let trans = dbobj.transaction(["mostuseapp"], "readwrite")
             let objectStore = trans.objectStore("mostuseapp")
 
@@ -85,8 +115,7 @@ function doAfterCreated(tab) {
                 }
                 let requestput = objectStore.put(putdata)
                 requestput.onsuccess = e => {
-                    let obj = e.target.result
-                    // console.log(obj)
+                    // let obj = e.target.result
                 }
                 requestget.onerror = e => {
                     // console.log(e)
@@ -102,6 +131,10 @@ function doAfterCreated(tab) {
 }
 
 function getMostUsedAppData(tab) {
+    // puckered
+    // let puckered = JSON.parse(localStorage.pucker)
+    // let mostAppPuckered = puckered ? puckered.most_app : false
+    // console.log(puckered)
     // get on or off and maxnumber
     let maxCount
     if (localStorage.config != null) {
@@ -114,26 +147,18 @@ function getMostUsedAppData(tab) {
     }
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
-        // console.log(dbobj)
         let trans = dbobj.transaction(["mostuseapp"], "readwrite")
         let objectStore = trans.objectStore("mostuseapp")
         let ind = objectStore.index("viewtimes")
         let xx = {}
         let readyToSendArray = []
-        // console.log(tab)
         let senderUrlObj = new URL(tab.url)
-        // console.log(senderUrlObj)
-        // console.log(senderUrlObj.host)
 
         ind.openCursor(null, "prev").onsuccess = e => {
             var cursor = event.target.result
             if (cursor) {
-                // let apphref = cursor.value.apphref
-                // xx[apphref] = cursor.value.appname
                 xx.apphref = cursor.value.apphref
                 let xxUrlObj = new URL(xx.apphref)
-                // console.log(xxUrlObj)
-                // console.log(xxUrlObj.host)
                 xx.appname = cursor.value.appname
                 xx.viewtimes = cursor.value.viewtimes
                 if (senderUrlObj.host == xxUrlObj.host) {
@@ -143,7 +168,6 @@ function getMostUsedAppData(tab) {
                 cursor.continue()
             } else {
                 // no more results
-                // console.log(readyToSendArray)
                 let c = 0
                 for (var i in readyToSendArray) {
                     c++
@@ -156,24 +180,14 @@ function getMostUsedAppData(tab) {
                 chrome.tabs.sendMessage(tab.id, {
                     most_used_app_enable: true,
                     apps: readyToSendArray
+                    // puckered: mostAppPuckered
                 }, null, function (response) {
-                    console.log(response)
+                    // console.log(response)
                 })
             }
         }
     })
 }
-
-chrome.runtime.onInstalled.addListener(function (details) {
-    if (!localStorage.config) {
-        localStorage.config = JSON.stringify({
-            big_icon: true,
-            easy_at: true,
-            most_app: true,
-            most_app_num: 5
-        })
-    }
-})
 
 chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
     if (changeInfo.status && changeInfo.status == "complete") {
@@ -182,24 +196,24 @@ chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
 })
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    console.log(message)
+    // console.log(message)
     if (message.mostusedapp) {
-        console.log("start most used app")
+        // console.log("start most used app")
         getMostUsedAppData(sender.tab)
         sendResponse("most used app request has been received. --by background")
     }
     if (message.bigusericon) {
-        console.log("start big user icon")
+        // console.log("start big user icon")
         isBigUserIconEnable(sender.tab)
         sendResponse("big user icon request has been received. --by background")
     }
     if (message.easyat) {
-        console.log("start easy at")
+        // console.log("start easy at")
         isEasyAtEnable(sender.tab)
         sendResponse("easy at request has been received. --by background")
     }
     if (message.customizeportal) {
-        console.log("start customize portal")
+        // console.log("start customize portal")
         isCustomizePortalEnable(sender.tab)
         sendResponse("customize portal request has been received. --by background")
     }
