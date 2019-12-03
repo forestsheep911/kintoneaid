@@ -132,8 +132,8 @@ function doAfterCreated(tab) {
 
 function getMostUsedAppData(tab) {
     // puckered
-    let puckered = JSON.parse(localStorage.pucker)
-    let mostAppPuckered = puckered ? puckered.most_app : false
+    // let puckered = JSON.parse(localStorage.pucker)
+    // let mostAppPuckered = puckered ? puckered.most_app : false
     // console.log(puckered)
     // get on or off and maxnumber
     let maxCount
@@ -179,8 +179,8 @@ function getMostUsedAppData(tab) {
                 // console.log(readyToSendArray)
                 chrome.tabs.sendMessage(tab.id, {
                     most_used_app_enable: true,
-                    apps: readyToSendArray,
-                    puckered: mostAppPuckered
+                    apps: readyToSendArray
+                    // puckered: mostAppPuckered
                 }, null, function (response) {
                     // console.log(response)
                 })
