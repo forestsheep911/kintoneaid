@@ -1,3 +1,6 @@
+let puckeredImgUrl = "url(" + chrome.extension.getURL('icon/ddown.png') + ")"
+let unPuckeredImgUrl = "url(" + chrome.extension.getURL('icon/dup.png') + ")"
+
 window.onload = function () {
     // console.log("after onload")
 }
@@ -41,9 +44,7 @@ function regionLinkUp() {
         let naviRight = navi.getElementsByClassName("gaia-header-toolbar-right")[0]
         let naviRightLinks = navi.getElementsByClassName("gaia-header-toolbar-links")[0]
         naviRight.insertBefore(regionLink, naviRightLinks)
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function optionButtonUp() {
@@ -57,9 +58,7 @@ function optionButtonUp() {
         portalOptionMenu.style.height = "48px"
         naviRight.appendChild(portalOptionMenu)
         portalTitleBar.style.display = "none"
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function puckerAnnouncement(puckered) {
@@ -76,11 +75,13 @@ function puckerAnnouncement(puckered) {
             let annPuckered
             if ($(invisibleButton).hasClass('puckered')) {
                 annPuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
                 invisibleButton.setAttribute("title", "展开")
                 annBody.style.display = "none"
                 annFooter.style.display = "none"
             } else {
                 annPuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
                 invisibleButton.setAttribute("title", "收起")
                 annBody.style.display = "block"
                 annFooter.style.display = "block"
@@ -90,16 +91,17 @@ function puckerAnnouncement(puckered) {
         annHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             annBody.style.display = "none"
             annFooter.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
         // Announcement edit button position
         let annEditButton = this.document.getElementsByClassName("ocean-portal-announcement-edit")
         annEditButton[0].style.right = "48px"
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function puckerNotification(puckered) {
@@ -117,12 +119,14 @@ function puckerNotification(puckered) {
             $(invisibleButton).toggleClass("puckered")
             if ($(invisibleButton).hasClass('puckered')) {
                 notiPuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
                 invisibleButton.setAttribute("title", "展开")
                 notiMenu.style.display = "none"
                 notiBody.style.display = "none"
                 notiFooter.style.display = "none"
             } else {
                 notiPuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
                 invisibleButton.setAttribute("title", "收起")
                 notiMenu.style.display = "block"
                 notiBody.style.display = "block"
@@ -133,14 +137,15 @@ function puckerNotification(puckered) {
         notiHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             notiMenu.style.display = "none"
             notiBody.style.display = "none"
             notiFooter.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function puckerAssigned(puckered) {
@@ -156,10 +161,12 @@ function puckerAssigned(puckered) {
             $(invisibleButton).toggleClass("puckered")
             if ($(invisibleButton).hasClass('puckered')) {
                 assPuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
                 invisibleButton.setAttribute("title", "展开")
                 assBody.style.display = "none"
             } else {
                 assPuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
                 invisibleButton.setAttribute("title", "收起")
                 assBody.style.display = "block"
             }
@@ -168,12 +175,13 @@ function puckerAssigned(puckered) {
         assHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             assBody.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function puckerSpace(puckered) {
@@ -190,11 +198,13 @@ function puckerSpace(puckered) {
             $(invisibleButton).toggleClass("puckered")
             if ($(invisibleButton).hasClass('puckered')) {
                 spacePuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
                 invisibleButton.setAttribute("title", "展开")
                 spaceMenu.style.display = "none"
                 spaceBody.style.display = "none"
             } else {
                 spacePuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
                 invisibleButton.setAttribute("title", "收起")
                 spaceMenu.style.display = "block"
                 spaceBody.style.display = "block"
@@ -204,16 +214,17 @@ function puckerSpace(puckered) {
         spaceHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             spaceMenu.style.display = "none"
             spaceBody.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
         // Announcement edit button position
         let spaceAddButton = this.document.getElementsByClassName("ocean-portal-spacelist-newspace")
         spaceAddButton[0].style.right = "48px"
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
 function puckerApp(puckered) {
@@ -230,11 +241,13 @@ function puckerApp(puckered) {
             $(invisibleButton).toggleClass("puckered")
             if ($(invisibleButton).hasClass('puckered')) {
                 appPuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
                 invisibleButton.setAttribute("title", "展开")
                 appMenu.style.display = "none"
                 appBody.style.display = "none"
             } else {
                 appPuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
                 invisibleButton.setAttribute("title", "收起")
                 appMenu.style.display = "block"
                 appBody.style.display = "block"
@@ -244,20 +257,19 @@ function puckerApp(puckered) {
         appHeader.appendChild(invisibleButton)
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             appMenu.style.display = "none"
             appBody.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
         // Announcement edit button position
         let appAddButton = this.document.getElementsByClassName("ocean-portal-applist-newapp")
         appAddButton[0].style.right = "48px"
-    } catch (error) {
-        // console.error(error)
-    }
+    } catch (error) {}
 }
 
-// todo
-// save pucker info into localstorage(content script[HTML5's][by site])
 function savePuckeredInfo(field, boolValue) {
     if (localStorage.kaidPuckered) {
         let puckerJson = JSON.parse(localStorage.kaidPuckered)
@@ -276,7 +288,6 @@ function loadPuckeredInfo(field) {
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    // console.log(message)
     if (message.big_user_icon_enable) {
         sendResponse("bigusericon has been recived")
         setTimeout(photoinject, 2000)
@@ -290,8 +301,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         sendResponse("customize portal has been recived")
         regionLinkUp()
         optionButtonUp()
-        // todo
-        // get pucker info from localstorage(content script[HTML5's][by site])
         puckerAnnouncement(loadPuckeredInfo("announcement"))
         puckerNotification(loadPuckeredInfo("notification"))
         puckerAssigned(loadPuckeredInfo("assigned"))
@@ -329,25 +338,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 // listen for kintone event
 window.onmessage = function (event) {
-    // console.log(event);
     if (event.data.id === "fddekggkcckafbhlmjkbmhilkodcnaao") {
         if (event.data.msg === "on.kintone.portal.show") {
-            if ($('#mostusedapp').length > 0) {
-                // console.log("already have mua")
-            } else {
-                // console.log("no mua")
+            if ($('#mostusedapp').length > 0) {} else {
                 chrome.runtime.sendMessage(null, {
                     "mostusedapp": true
-                }, null, function (response) {
-                    // console.log(response)
-                })
+                }, null, function (response) {})
             }
             // customize portal
             chrome.runtime.sendMessage(null, {
                 "customizeportal": true
-            }, null, function (response) {
-                // console.log(response)
-            })
+            }, null, function (response) {})
         }
     }
 

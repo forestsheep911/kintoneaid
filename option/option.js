@@ -84,9 +84,6 @@ function optionGo() {
                 this.saveconfig()
             },
             tx1: function (event) {
-                if (this.config.most_app_num == "") {
-                    this.config.most_app_num = 5
-                }
                 this.saveconfig()
             }
         }

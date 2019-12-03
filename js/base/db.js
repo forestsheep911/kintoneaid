@@ -29,15 +29,6 @@ function openDB() {
                 //     unique: true
                 // })
             }
-            // in order to save utterance 
-            if (event.oldVersion < 2) {
-                let objectStore = db.createObjectStore("utterance_history", {
-                    keyPath: "href"
-                })
-                objectStore.createIndex("CreateDateTime", "CreateDateTime", {
-                    unique: false
-                })
-            }
         }
     })
 }

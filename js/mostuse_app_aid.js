@@ -40,6 +40,7 @@ let showApps = function (mostapp) {
 
     // pucker button
     let invisibleButton = document.createElement("a")
+    invisibleButton.style.backgroundImage = unPuckeredImgUrl
     invisibleButton.setAttribute("title", "收起")
     invisibleButton.setAttribute("class", "max-min-block")
     invisibleButton.onclick = () => {
@@ -47,10 +48,12 @@ let showApps = function (mostapp) {
         $(invisibleButton).toggleClass("puckered")
         if ($(invisibleButton).hasClass('puckered')) {
             mostAppPuckered = true
+            invisibleButton.style.backgroundImage = puckeredImgUrl
             invisibleButton.setAttribute("title", "展开")
             listui.style.display = "none"
         } else {
             mostAppPuckered = false
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
             invisibleButton.setAttribute("title", "收起")
             listui.style.display = "block"
         }
@@ -59,7 +62,10 @@ let showApps = function (mostapp) {
     appHeader.appendChild(invisibleButton)
     if (loadPuckeredInfo("most_app")) {
         $(invisibleButton).toggleClass("puckered")
+        invisibleButton.style.backgroundImage = puckeredImgUrl
         invisibleButton.setAttribute("title", "展开")
         listui.style.display = "none"
+    } else {
+        invisibleButton.style.backgroundImage = unPuckeredImgUrl
     }
 }
