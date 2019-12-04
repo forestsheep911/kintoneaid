@@ -35,7 +35,7 @@
         ],
         "js": [
             "lib/jquery-3.4.1.min.js",
-            "js/base/db.js",
+            "js/csdb.js",
             "js/event_reg.js",
             "js/photo_aid.js",
             "js/at_aid.js",

@@ -1,12 +1,10 @@
 function openDB() {
     return new Promise((resolve, reject) => {
-        let dbopenrequest = window.indexedDB.open("savedata", 2)
-
+        let dbopenrequest = window.indexedDB.open("kintoneaiddb", 1)
         dbopenrequest.onerror = function (event) {
             console.log("Database error: " + event.target.errorCode)
             reject()
         }
-
         dbopenrequest.onsuccess = function (event) {
             console.log("db open success")
             resolve(dbopenrequest.result)
@@ -17,19 +15,12 @@ function openDB() {
                 console.log("Error upgrade database.")
             }
             if (event.oldVersion < 1) {
-                let objectStore = db.createObjectStore("mostuseapp", {
-                    keyPath: "apphref"
-                })
-                objectStore.createIndex("viewtimes", "viewtimes", {
-                    unique: false
-                })
-            }
-            // in order to save utterance 
-            if (event.oldVersion < 2) {
                 let objectStore = db.createObjectStore("utterance_history", {
-                    keyPath: "href"
+                    autoIncrement: true
                 })
-                objectStore.createIndex("CreateDateTime", "CreateDateTime", {
+                console.log(objectStore)
+                console.log("objectStore cerated")
+                objectStore.createIndex("cdt", "CreateDateTime", {
                     unique: false
                 })
             }

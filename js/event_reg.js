@@ -287,6 +287,21 @@ function loadPuckeredInfo(field) {
     return puckeredInfo ? puckeredInfo[field] ? true : false : false
 }
 
+function saveUtter(saveobj) {
+    openDB().then(function (promiseValue) {
+        let dbobj = promiseValue
+        let trans = dbobj.transaction(["utterance_history"], "readwrite")
+        let objectStore = trans.objectStore("utterance_history")
+        let requestput = objectStore.put(saveobj)
+        requestput.onsuccess = e => {
+            // console.log(e)
+        }
+        requestput.onerror = e => {
+            // console.log(e)
+        }
+    })
+}
+
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.big_user_icon_enable) {
         sendResponse("bigusericon has been recived")
@@ -307,29 +322,31 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
     } else if (message.commentResult) {
+        let utterContentSummary
+        let utterLink
         console.log("commentResult recived")
-        let commentText = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
-        console.log(commentText)
-        if (commentText.length > 0) {
-            console.log(commentText[0].innerHTML)
+        let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
+        console.log(commentTexts)
+        if (commentTexts.length > 0) {
+            // todo organize data
+            console.log(commentTexts[0].innerHTML)
+            console.log(commentTexts[0].innerText)
+            // 去除非打印字符然后取前20个字符
+            utterContentSummary = commentTexts[0].innerText.replace(/\s/g, "").substring(0, 20)
         }
-        // let commentBlock1s = document.getElementsByClassName("ocean-ui-comments-commentbase")
-        // console.log(commentBlock1s)
-        // if (commentBlock1s.length > 0) {
-        //     console.log(commentBlock1s[0])
-        // }
-        // let commentBlock2s = document.getElementsByClassName("ocean-ui-comments-post")
-        // console.log(commentBlock2s)
-        // if (commentBlock2s.length > 0) {
-        //     console.log(commentBlock2s[0])
-        // }
-        //ocean-ui-comments-commentbase ocean-ui-comments-post ocean-ui-comments-post-id-2162679
         let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
         console.log(commentTimes)
         if (commentTimes.length > 0) {
             console.log(commentTimes[0].children)
-            console.log(commentTimes[0].children[0].href)
+            console.log(commentTimes[0].firstChild.href)
+            utterLink = commentTimes[0].firstChild.href
         }
+        let saveobj = {
+            CreateDateTime: new Date(),
+            contentSummary: utterContentSummary,
+            link: utterLink
+        }
+        saveUtter(saveobj)
         sendResponse("commentResult -- by event reg")
     } else {
         sendResponse("none of my bussiness -- by event reg")
@@ -351,5 +368,4 @@ window.onmessage = function (event) {
             }, null, function (response) {})
         }
     }
-
 }

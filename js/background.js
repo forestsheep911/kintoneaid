@@ -40,7 +40,10 @@ chrome.runtime.onInstalled.addListener(function (details) {
                 console.log(tab)
                 chrome.tabs.sendMessage(tab.id, {
                     commentResult: true
-                }, null, function (response) {})
+                }, null, function (response) {
+                    console.log(response)
+                    // todo save db
+                })
             })
         }, {
             urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
@@ -119,7 +122,6 @@ function doAfterCreated(tab) {
             let dbobj = promiseValue
             let trans = dbobj.transaction(["mostuseapp"], "readwrite")
             let objectStore = trans.objectStore("mostuseapp")
-
             let requestget = objectStore.get(URLobj.href)
             requestget.onsuccess = e => {
                 let obj = e.target.result
@@ -135,7 +137,7 @@ function doAfterCreated(tab) {
                 requestput.onsuccess = e => {
                     // let obj = e.target.result
                 }
-                requestget.onerror = e => {
+                requestput.onerror = e => {
                     // console.log(e)
                 }
             }
