@@ -38,8 +38,37 @@ chrome.runtime.onInstalled.addListener(function (details) {
             console.log(details)
             chrome.tabs.get(details.tabId, function (tab) {
                 console.log(tab)
+                console.log(tab.url)
+                let utterSpace
+                let utterApp
+                let utterNotiApp
+                let ptnSpace = new RegExp(/\/k\/#\/space/g)
+                let ptnNotiSpace = new RegExp(/\/k\/#\/ntf\/mention\/k\/space/g)
+                let ptnNotiApp = new RegExp(/\/k\/#\/ntf\/mention\/k\/(?!space)/g)
+                let ptnApp = new RegExp(/\/k\/\d+\//g)
+                if (ptnSpace.exec(tab.url) != null) {
+                    utterSpace = true
+                    utterApp = false
+                    utterNotiApp = false
+                } else if (ptnApp.exec(tab.url) != null) {
+                    utterSpace = false
+                    utterApp = true
+                    utterNotiApp = false
+                } else if (ptnNotiSpace.exec(tab.url) != null) {
+                    utterSpace = true
+                    utterApp = false
+                    utterNotiApp = false
+                    console.log("noti")
+                } else if (ptnNotiApp.exec(tab.url) != null) {
+                    utterSpace = false
+                    utterApp = false
+                    utterNotiApp = true
+                    console.log("noti in app")
+                }
                 chrome.tabs.sendMessage(tab.id, {
-                    commentResult: true
+                    utterInSpace: utterSpace,
+                    utterInApp: utterApp,
+                    utterInNotiApp: utterNotiApp
                 }, null, function (response) {
                     console.log(response)
                     // todo save db

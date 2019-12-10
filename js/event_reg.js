@@ -294,12 +294,179 @@ function saveUtter(saveobj) {
         let objectStore = trans.objectStore("utterance_history")
         let requestput = objectStore.put(saveobj)
         requestput.onsuccess = e => {
-            // console.log(e)
+            console.log(e)
         }
         requestput.onerror = e => {
-            // console.log(e)
+            console.log(e)
         }
     })
+}
+
+function getSaveSpaceUtterContent() {
+    console.log("utter in space found")
+    // test noti
+    let iframe = document.getElementsByTagName("iframe")
+    console.log(iframe)
+    // link
+    let utterLink
+    let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
+    utterLink = commentTimes.length > 0 ? commentTimes[0].firstChild.href : null
+    console.log(utterLink)
+    if (!utterLink) {
+        return false
+    }
+    // // 获取 除mention外的发言内容
+    let utterContentSummary
+    let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
+    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
+    if (!utterContentSummary) {
+        return false
+    }
+    console.log(utterContentSummary)
+
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+
+
+    let saveobj = {
+        CreateDateTime: new Date(),
+        contentSummary: utterContentSummary,
+        link: utterLink,
+        mentionUsers: mentionUsersArray
+    }
+    saveUtter(saveobj)
+}
+
+function getSaveAppUtterContent() {
+    // 获取link: URL + comment序列号
+    let commentUrl
+    let ptnUrl = new RegExp(/^.*record=\d+/g)
+    let match
+    if ((match = ptnUrl.exec(window.location.href)) != null) {
+        commentUrl = match[0]
+    } else {
+        return false
+    }
+    let utterNumbers = document.getElementsByClassName("itemlist-user-gaia")
+    let commentNumber = utterNumbers.length > 0 ? utterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
+    if (!commentNumber) {
+        return false
+    }
+    // 获取 除mention外的发言内容
+    let commentTexts = document.getElementsByClassName("commentlist-body-gaia")
+    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
+    if (!utterContentSummary) {
+        return false
+    }
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+    let saveobj = {
+        CreateDateTime: new Date(),
+        contentSummary: utterContentSummary,
+        link: commentUrl + "&comment=" + commentNumber,
+        mentionUsers: mentionUsersArray
+    }
+    console.log(saveobj)
+    saveUtter(saveobj)
+    return true
+}
+
+function getSaveNotiAppUtterContent() {
+    let innerIFrames = document.getElementsByTagName("iframe")
+    if (innerIFrames.length == 0) {
+        return false
+    }
+    // 获取link: URL + comment序列号
+    let commentUrl
+    let ptnUrl = new RegExp(/(^.*\/k\/)#\/ntf\/mention\/k\/\D+(\d+)\D(\d+)/g)
+    let match
+    if ((match = ptnUrl.exec(window.location.href)) != null) {
+        console.log(match[0])
+        console.log(match[1])
+        console.log(match[2])
+        console.log(match[3])
+        commentUrl = match[1] + match[2] + "/show#record=" + match[3]
+        console.log(commentUrl)
+    } else {
+        return false
+    }
+
+    let ifUtterNumbers = innerIFrames[0].contentDocument.getElementsByClassName("itemlist-user-gaia")
+    let commentNumber = ifUtterNumbers.length > 0 ? ifUtterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
+    if (!commentNumber) {
+        return false
+    }
+    let ifCommentTexts = innerIFrames[0].contentDocument.getElementsByClassName("commentlist-body-gaia")
+    let firstCommentText = ifCommentTexts.length > 0 ? ifCommentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
+    if (!utterContentSummary) {
+        return false
+    }
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+    let saveobj = {
+        CreateDateTime: new Date(),
+        contentSummary: utterContentSummary,
+        link: commentUrl + "&comment=" + commentNumber,
+        mentionUsers: mentionUsersArray
+    }
+    console.log(saveobj)
+    saveUtter(saveobj)
+    return true
 }
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -321,33 +488,23 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         puckerAssigned(loadPuckeredInfo("assigned"))
         puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
-    } else if (message.commentResult) {
-        let utterContentSummary
-        let utterLink
-        console.log("commentResult recived")
-        let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
-        console.log(commentTexts)
-        if (commentTexts.length > 0) {
-            // todo organize data
-            console.log(commentTexts[0].innerHTML)
-            console.log(commentTexts[0].innerText)
-            // 去除非打印字符然后取前20个字符
-            utterContentSummary = commentTexts[0].innerText.replace(/\s/g, "").substring(0, 20)
-        }
-        let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
-        console.log(commentTimes)
-        if (commentTimes.length > 0) {
-            console.log(commentTimes[0].children)
-            console.log(commentTimes[0].firstChild.href)
-            utterLink = commentTimes[0].firstChild.href
-        }
-        let saveobj = {
-            CreateDateTime: new Date(),
-            contentSummary: utterContentSummary,
-            link: utterLink
-        }
-        saveUtter(saveobj)
-        sendResponse("commentResult -- by event reg")
+    } else if (message.utterInSpace) {
+        console.log("utter space")
+        setTimeout(() => {
+            getSaveSpaceUtterContent()
+        }, 200);
+        sendResponse("utterInSpace -- by event reg")
+    } else if (message.utterInApp) {
+        setTimeout(() => {
+            getSaveAppUtterContent()
+        }, 500);
+        sendResponse("utterInApp -- by event reg")
+    } else if (message.utterInNotiApp) {
+        setTimeout(() => {
+            console.log("cs: noti app")
+            getSaveNotiAppUtterContent()
+        }, 500);
+        sendResponse("utterInApp -- by event reg")
     } else {
         sendResponse("none of my bussiness -- by event reg")
     }
@@ -366,6 +523,8 @@ window.onmessage = function (event) {
             chrome.runtime.sendMessage(null, {
                 "customizeportal": true
             }, null, function (response) {})
+            //utter under dev
+            showUtter()
         }
     }
 }

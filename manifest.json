@@ -36,10 +36,11 @@
         "js": [
             "lib/jquery-3.4.1.min.js",
             "js/csdb.js",
+            "js/mostuse_app_aid.js",
+            "js/utter_history.js",
             "js/event_reg.js",
             "js/photo_aid.js",
             "js/at_aid.js",
-            "js/mostuse_app_aid.js",
             "js/insert_js.js"
         ]
     }],
