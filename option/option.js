@@ -22,6 +22,12 @@ function optionGo() {
         mounted: function () {
             if (localStorage.config != null) {
                 this.config = JSON.parse(localStorage.config)
+                if (!this.config.most_app_num) {
+                    this.config.most_app_num = 5
+                }
+                if (!this.config.easy_at_cus_text) {
+                    this.config.easy_at_cus_text = "@"
+                }
                 if (this.config.big_icon) {
                     $('#bc1 .button').toggleClass('inactive')
                     $('#bc1 .content').toggleClass('inactive')
@@ -55,6 +61,7 @@ function optionGo() {
                 $('#tc32').toggleClass('inactive')
                 $('#bc4 .content').toggleClass('inactive')
             }
+            this.saveconfig()
         },
         methods: {
             saveconfig: function () {

@@ -5,6 +5,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             cus_por: true,
             big_icon: true,
             easy_at: true,
+            easy_at_cus_text: "@",
             most_app: true,
             most_app_num: 5
         })
