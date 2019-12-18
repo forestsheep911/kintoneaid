@@ -23,6 +23,9 @@
     "optionCustomPortalName": {
         "message": "ポータルをカスタマイズする"
     },
+    "optionEasyAtCusTextTitleName": {
+        "message": "メンションマーク"
+    },
     "enableName": {
         "message": "有効"
     },

@@ -53,6 +53,12 @@
                     </div>
                 </div>
             </div>
+            <div class="option_text">
+                <span id="easy_at_cus_text_title" class="option_item_title inactive">{{ easyAtCusTextTitle }}</span>
+                <input id="easy_at_cus_text_value" type="text" class="option_item_input inactive"
+                    v-model="config.easy_at_cus_text" v-on:change="saveEasyAtCusText"
+                    :disabled="!config.easy_at"></span>
+            </div>
             <div id="bc3" class="switch" v-on:click="bt3">
                 <div class="content inactive">{{ mostUsedAppTitle }}</div>
                 <div class="button-wrapper">

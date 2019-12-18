@@ -5,6 +5,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             cus_por: true,
             big_icon: true,
             easy_at: true,
+            easy_at_cus_text: "@",
             most_app: true,
             most_app_num: 5
         })
@@ -91,7 +92,8 @@ function isEasyAtEnable(tab) {
         let easyAtEnable = config.easy_at ? true : false
         // if (!easyAtEnable) {
         chrome.tabs.sendMessage(tab.id, {
-            easy_at_enable: easyAtEnable
+            easy_at_enable: easyAtEnable,
+            easy_at_mention_mark: config.easy_at_cus_text
         }, null, function (response) {
             // console.log(response)
         })
@@ -194,9 +196,12 @@ function getMostUsedAppData(tab) {
     } else {
         maxCount = 5
     }
+    console.log("1")
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
+        console.log("2")
         let trans = dbobj.transaction(["mostuseapp"], "readwrite")
+        console.log("3")
         let objectStore = trans.objectStore("mostuseapp")
         let ind = objectStore.index("viewtimes")
         let xx = {}
@@ -246,7 +251,7 @@ chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // console.log(message)
     if (message.mostusedapp) {
-        // console.log("start most used app")
+        console.log("start most used app")
         getMostUsedAppData(sender.tab)
         sendResponse("most used app request has been received. --by background")
     }
