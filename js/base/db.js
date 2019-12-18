@@ -25,9 +25,6 @@ function openDB() {
                 objectStore.createIndex("viewtimes", "viewtimes", {
                     unique: false
                 })
-                // objectStore.createIndex("appid", "appid", {
-                //     unique: true
-                // })
             }
             // in order to save utterance 
             if (event.oldVersion < 2) {

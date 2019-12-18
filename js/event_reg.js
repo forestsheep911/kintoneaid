@@ -293,16 +293,19 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         setTimeout(photoinject, 2000)
     } else if (message.easy_at_enable) {
         sendResponse("easy at has been recived")
-        setTimeout(atinject, 2200)
+        setTimeout(() => {
+            atinject(message.easy_at_mention_mark)
+        }, 2200);
     } else if (message.most_used_app_enable) {
         sendResponse("most use app list has been recived")
+        console.log(message)
         showApps(message.apps)
     } else if (message.customize_portal_enable) {
         sendResponse("customize portal has been recived")
         regionLinkUp()
         optionButtonUp()
         puckerAnnouncement(loadPuckeredInfo("announcement"))
-        puckerNotification(loadPuckeredInfo("notification"))
+        // puckerNotification(loadPuckeredInfo("notification"))
         puckerAssigned(loadPuckeredInfo("assigned"))
         puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
@@ -315,6 +318,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 window.onmessage = function (event) {
     if (event.data.id === "fddekggkcckafbhlmjkbmhilkodcnaao") {
         if (event.data.msg === "on.kintone.portal.show") {
+            console.log("send message")
             if ($('#mostusedapp').length > 0) {} else {
                 chrome.runtime.sendMessage(null, {
                     "mostusedapp": true

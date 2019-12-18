@@ -23,6 +23,9 @@
     "optionCustomPortalName": {
         "message": "Customize Portal"
     },
+    "optionEasyAtCusTextTitleName": {
+        "message": "Mention Mark"
+    },
     "enableName": {
         "message": "Enable"
     },

@@ -23,6 +23,9 @@
     "optionCustomPortalName": {
         "message": "首页定制"
     },
+    "optionEasyAtCusTextTitleName": {
+        "message": "提醒标记"
+    },
     "enableName": {
         "message": "启用"
     },

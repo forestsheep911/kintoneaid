@@ -6,4 +6,3 @@ s.onload = function () {
     }, 20000);
 };
 (document.head || document.documentElement).appendChild(s)
-console.log(s)
