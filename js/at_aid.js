@@ -25,24 +25,24 @@ function placeCaretAtEnd(jsDom) { //传入光标要去的jsDom节点
     }
 }
 
-function atinject() {
+function atinject(atMarkString) {
     // 0 path
     // 1 mentionid
     // 2 username
     let finduserhref = $.find('.user-link-cybozu')
 
     if (finduserhref.length != 0) {
-        doloop(finduserhref, false)
+        doloop(finduserhref, false, atMarkString)
     }
 
     let myiframe = $('iframe')
     if (myiframe.length != 0) {
         let finduserhref = myiframe.contents().find('.user-link-cybozu')
-        doloop(finduserhref, true)
+        doloop(finduserhref, true, atMarkString)
     }
 }
 
-function doloop(finduserhref, isNoti) {
+function doloop(finduserhref, isNoti, atMarkString) {
     for (let i = 0; i < finduserhref.length; i++) {
         // popstate may create duplicated @, if find @ href, skip
         // console.log(finduserhref[i])
@@ -62,7 +62,7 @@ function doloop(finduserhref, isNoti) {
         // create the <a> element "at"
         let ata = document.createElement("a")
         ata.style = 'margin-left: 5px'
-        ata.innerText = '@'
+        ata.innerText = atMarkString
         /*jshint -W083 */
         $(ata).click(function () {
             let replybox
