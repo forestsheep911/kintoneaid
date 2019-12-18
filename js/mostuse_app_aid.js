@@ -12,7 +12,7 @@ let showApps = function (mostapp) {
 
     let appHeader = document.createElement("div")
     appHeader.setAttribute("class", "gaia-argoui-widget-header gaia-argoui-widget-header-icon")
-    appHeader.setAttribute("style", "background-image: url(\"https://static.cybozu.com/contents/k/image/icon/app/diamond.png\"); background-position: left top; background-repeat: no-repeat;")
+    appHeader.setAttribute("style", "background-image: url(\"https://static.cybozu.cn/contents/k/image/ocean/cover/documents-select.jpg\"); background-position: left top; background-repeat: no-repeat;")
     $(appList).append(appHeader)
 
     let appheadername = document.createElement("H3")
