@@ -1,5 +1,6 @@
 let puckeredImgUrl = "url(" + chrome.extension.getURL('icon/ddown.png') + ")"
 let unPuckeredImgUrl = "url(" + chrome.extension.getURL('icon/dup.png') + ")"
+let loginUserId
 
 window.onload = function () {
     // console.log("after onload")
@@ -288,6 +289,13 @@ function loadPuckeredInfo(field) {
 }
 
 function saveUtter(saveobj) {
+    if (loginUserId) {
+        saveobj.utterUserId = loginUserId
+    } else {
+        return
+    }
+    saveobj.contentSummary = Encrypt(saveobj.contentSummary)
+    saveobj.link = Encrypt(saveobj.link)
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
         let trans = dbobj.transaction(["utterance_history"], "readwrite")
@@ -304,9 +312,7 @@ function saveUtter(saveobj) {
 
 function getSaveSpaceUtterContent() {
     console.log("utter in space found")
-    // test noti
-    let iframe = document.getElementsByTagName("iframe")
-    console.log(iframe)
+    // space的通知貌似并不是用iframe做的，所以不必像app那样分开取，这里一次都能取道
     // link
     let utterLink
     let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
@@ -480,7 +486,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         }, 2200);
     } else if (message.most_used_app_enable) {
         sendResponse("most use app list has been recived")
-        console.log(message)
         showApps(message.apps)
     } else if (message.customize_portal_enable) {
         sendResponse("customize portal has been recived")
@@ -507,7 +512,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             console.log("cs: noti app")
             getSaveNotiAppUtterContent()
         }, 500);
-        sendResponse("utterInApp -- by event reg")
+        sendResponse("utterInNotiApp -- by event reg")
     } else {
         sendResponse("none of my bussiness -- by event reg")
     }
@@ -515,7 +520,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
 // listen for kintone event
 window.onmessage = function (event) {
-    if (event.data.id === "fddekggkcckafbhlmjkbmhilkodcnaao") {
+    if (event.data.id === "aifcogmioeencjbmlgcfnfkgffahnmpf") {
         if (event.data.msg === "on.kintone.portal.show") {
             if ($('#mostusedapp').length > 0) {} else {
                 chrome.runtime.sendMessage(null, {
@@ -527,7 +532,11 @@ window.onmessage = function (event) {
                 "customizeportal": true
             }, null, function (response) {})
             //utter under dev
-            showUtter()
+            showUtter(loginUserId)
+        } else if (event.data.msg === "kintone.getLoginUser") {
+            console.log(event.data.info)
+            loginUserId = event.data.info.id
+            console.log(loginUserId)
         }
     }
 }
