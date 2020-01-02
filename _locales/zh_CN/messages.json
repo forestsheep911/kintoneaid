@@ -29,6 +29,36 @@
     "optionUtterHistoryTitleName": {
         "message": "投稿历史"
     },
+    "UtterHistoryColumnUtterenceName": {
+        "message": "内容"
+    },
+    "UtterHistoryColumnMentionsName": {
+        "message": "@的用户"
+    },
+    "UtterHistoryColumnSourceName": {
+        "message": "出处"
+    },
+    "UtterHistoryColumnDatetimeName": {
+        "message": "投稿日时"
+    },
+    "UtterHistoryShowingInfoName": {
+        "message": "_TOTAL_项中的_START_到_END_"
+    },
+    "UtterHistoryShowingInfoEmptyName": {
+        "message": "无记录可供显示"
+    },
+    "UtterHistoryShowingInfoFilteredName": {
+        "message": "(从_MAX_项中搜索)"
+    },
+    "UtterHistorylengthMenuName": {
+        "message": "每页显示_MENU_"
+    },
+    "UtterHistorySearchName": {
+        "message": "搜索："
+    },
+    "UtterHistoryzeroRecordsName": {
+        "message": "无结果显示"
+    },
     "enableName": {
         "message": "启用"
     },

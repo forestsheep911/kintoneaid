@@ -314,6 +314,7 @@ function getSaveSpaceUtterContent() {
     // link
     let utterLink
     let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
+
     utterLink = commentTimes.length > 0 ? commentTimes[0].firstChild.href : null
     console.log(utterLink)
     if (!utterLink) {
@@ -322,11 +323,14 @@ function getSaveSpaceUtterContent() {
     // // 获取 除mention外的发言内容
     let utterContentSummary
     let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
+
     let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
     if (!firstCommentText) {
         return false
     }
-
+    if (firstCommentText.innerText === "\n") {
+        console.log("huiche")
+    }
     let commentTextClone = firstCommentText.cloneNode(true)
     let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
     while (readytodeletenodes.length > 0) {
@@ -334,9 +338,8 @@ function getSaveSpaceUtterContent() {
     }
     utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
     if (!utterContentSummary) {
-        return false
+        utterContentSummary = ""
     }
-    console.log(utterContentSummary)
 
     // mention users
     let mentionUsersArray = []
@@ -392,6 +395,7 @@ function getSaveAppUtterContent() {
     }
     // 获取 除mention外的发言内容
     let commentTexts = document.getElementsByClassName("commentlist-body-gaia")
+    console.log(commentTexts)
     let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
     if (!firstCommentText) {
         return false
@@ -473,7 +477,7 @@ function getSaveNotiAppUtterContent() {
     }
     let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
     if (!utterContentSummary) {
-        return false
+        utterContentSummary = ""
     }
     // mention users
     let mentionUsersArray = []

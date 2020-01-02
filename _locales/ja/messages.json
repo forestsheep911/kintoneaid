@@ -29,6 +29,36 @@
     "optionUtterHistoryTitleName": {
         "message": "投稿歴史"
     },
+    "UtterHistoryColumnUtterenceName": {
+        "message": "内容"
+    },
+    "UtterHistoryColumnMentionsName": {
+        "message": "メンション ユーザー"
+    },
+    "UtterHistoryColumnSourceName": {
+        "message": "出所"
+    },
+    "UtterHistoryColumnDatetimeName": {
+        "message": "投稿日時"
+    },
+    "UtterHistoryShowingInfoName": {
+        "message": "_TOTAL_件中_START_から_END_"
+    },
+    "UtterHistoryShowingInfoEmptyName": {
+        "message": "データなし"
+    },
+    "UtterHistoryShowingInfoFilteredName": {
+        "message": "(_MAX_件から絞り込み)"
+    },
+    "UtterHistorylengthMenuName": {
+        "message": "表示項目_MENU_"
+    },
+    "UtterHistorySearchName": {
+        "message": "検索:"
+    },
+    "UtterHistoryzeroRecordsName": {
+        "message": "表示内容なし"
+    },
     "enableName": {
         "message": "有効"
     },

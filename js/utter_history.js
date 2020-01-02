@@ -18,16 +18,11 @@ function showUtter(loginUserId) {
 
     let menuTitle = document.createElement("h3")
     menuTitle.setAttribute("class", "gaia-argoui-widget-title")
-    menuTitle.innerText = "Utterance History"
+    menuTitle.innerText = chrome.i18n.getMessage("optionUtterHistoryTitleName")
     $(header).append(menuTitle)
 
     let tableStruct = '<table id="uhtable" class="display" style="width:100%"><thead></thead><tbody></tbody></table>'
     $(widget).append(tableStruct)
-
-    //list
-    // let listui = document.createElement("ui")
-    // listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
-    // $(widget).append(listui)
 
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
@@ -42,8 +37,12 @@ function showUtter(loginUserId) {
                     let fillobj = {}
 
                     let utterContentAndHref = document.createElement("a")
-                    // utterContentAndHref.setAttribute("style", "margin-left:5px")
-                    utterContentAndHref.innerText = Decrypt(cursor.value.contentSummary)
+                    let contentSummary = Decrypt(cursor.value.contentSummary)
+                    if (contentSummary === "") {
+                        utterContentAndHref.innerText = "<unknow message>"
+                    } else {
+                        utterContentAndHref.innerText = contentSummary
+                    }
                     utterContentAndHref.href = Decrypt(cursor.value.link)
                     utterContentAndHref.setAttribute("style", "white-space:nowrap;")
                     fillobj.utterence = utterContentAndHref.outerHTML
@@ -52,9 +51,7 @@ function showUtter(loginUserId) {
                     createDateTimeEle.setAttribute("style", "white-space:nowrap;overflow:hidden; text-align:right")
                     createDateTimeEle.innerText = cursor.value.CreateDateTime.Format("yyyy-MM-dd hh:mm:ss")
                     fillobj.datetime = createDateTimeEle.outerHTML
-
                     fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
-
                     if (cursor.value.sourceType === "APP") {
                         let imgEle = document.createElement("div")
                         imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.cn/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
@@ -90,6 +87,20 @@ function showUtter(loginUserId) {
                     lengthMenu: [3, 5, 8, 13, 21, 34, 55],
                     data: fillarraywithinobj,
                     autoWidth: false,
+                    language: {
+                        paginate: {
+                            first: '«',
+                            previous: '‹',
+                            next: '›',
+                            last: '»'
+                        },
+                        info: chrome.i18n.getMessage("UtterHistoryShowingInfoName"),
+                        infoEmpty: chrome.i18n.getMessage("UtterHistoryShowingInfoEmpytName"),
+                        infoFiltered: chrome.i18n.getMessage("UtterHistoryShowingInfoFilteredName"),
+                        lengthMenu: chrome.i18n.getMessage("UtterHistorylengthMenuName"),
+                        search: chrome.i18n.getMessage("UtterHistorySearchName"),
+                        zeroRecords: chrome.i18n.getMessage("UtterHistoryzeroRecordsName")
+                    },
                     order: [
                         [3, "desc"],
                     ],
@@ -111,20 +122,18 @@ function showUtter(loginUserId) {
                         width: "120px"
                     }],
                     columns: [{
-                            data: "utterence",
-                            title: "utterence"
-                        },
-                        {
-                            data: "mention",
-                            title: "mention"
-                        }, {
-                            data: "sourceName",
-                            title: "sourceName"
-                        }, {
-                            data: "datetime",
-                            title: "datatime",
-                        }
-                    ]
+                        data: "utterence",
+                        title: chrome.i18n.getMessage("UtterHistoryColumnUtterenceName")
+                    }, {
+                        data: "mention",
+                        title: chrome.i18n.getMessage("UtterHistoryColumnMentionsName")
+                    }, {
+                        data: "sourceName",
+                        title: chrome.i18n.getMessage("UtterHistoryColumnSourceName")
+                    }, {
+                        data: "datetime",
+                        title: chrome.i18n.getMessage("UtterHistoryColumnDatetimeName")
+                    }]
                 })
                 puckerUh(loadPuckeredInfo("uh"))
             }
