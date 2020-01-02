@@ -26,6 +26,9 @@
     "optionEasyAtCusTextTitleName": {
         "message": "提醒标记"
     },
+    "optionUtterHistoryTitleName": {
+        "message": "投稿历史"
+    },
     "enableName": {
         "message": "启用"
     },

@@ -7,7 +7,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
             easy_at: true,
             easy_at_cus_text: "@",
             most_app: true,
-            most_app_num: 5
+            most_app_num: 5,
+            utter_history: true
         })
     }
 
@@ -87,61 +88,102 @@ function ab2str(buf) {
 }
 
 function isEasyAtEnable(tab) {
-    if (localStorage.config != null) {
+    let ableValue = true
+    let cus_text = "@"
+    if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
-        let easyAtEnable = config.easy_at ? true : false
-        // if (!easyAtEnable) {
-        chrome.tabs.sendMessage(tab.id, {
-            easy_at_enable: easyAtEnable,
-            easy_at_mention_mark: config.easy_at_cus_text
-        }, null, function (response) {
-            // console.log(response)
-        })
-    } else {
-        chrome.tabs.sendMessage(tab.id, {
-            easy_at_enable: true
-        }, null, function (response) {
-            // console.log(response)
-        })
-        return
+        ableValue = config.easy_at !== false
+        cus_text = config.easy_at_cus_text ? config.easy_at_cus_text : "@"
+        console.log(cus_text)
     }
+    chrome.tabs.sendMessage(tab.id, {
+        easy_at_enable: ableValue,
+        easy_at_mention_mark: cus_text
+    }, null, function (response) {})
 }
 
 function isBigUserIconEnable(tab) {
-    if (localStorage.config != null) {
+    let ableValue = true
+    if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
-        let bigUserIconEnable = config.big_icon ? true : false
-        // if (!bigUserIconEnable) {
-        chrome.tabs.sendMessage(tab.id, {
-            big_user_icon_enable: bigUserIconEnable
-        }, null, function (response) {
-            // console.log(response)
-        })
-    } else {
-        chrome.tabs.sendMessage(tab.id, {
-            big_user_icon_enable: true
-        }, null, function (response) {
-            // console.log(response)
-        })
-        return
+        ableValue = config.big_icon !== false
     }
+    chrome.tabs.sendMessage(tab.id, {
+        big_user_icon_enable: ableValue,
+    }, null, function (response) {})
 }
 
 function isCustomizePortalEnable(tab) {
+    let ableValue = true
     if (localStorage.config) {
         let config = JSON.parse(localStorage.config)
-        let customizePortalEnable = config.cus_por ? true : false
-        chrome.tabs.sendMessage(tab.id, {
-            customize_portal_enable: customizePortalEnable
-        }, null, function (response) {
-            // console.log(response)
-        })
-    } else {
-        chrome.tabs.sendMessage(tab.id, {}, null, function (response) {
-            // console.log(response)
-        })
-        return
+        ableValue = config.cus_por !== false
     }
+    chrome.tabs.sendMessage(tab.id, {
+        customize_portal_enable: ableValue,
+    }, null, function (response) {})
+}
+
+function isUtterHistoryEnable(tab) {
+    let ableValue = true
+    if (localStorage.config) {
+        let config = JSON.parse(localStorage.config)
+        ableValue = config.utter_history !== false
+    }
+    chrome.tabs.sendMessage(tab.id, {
+        utter_history_enable: ableValue,
+    }, null, function (response) {})
+}
+
+function getMostUsedAppData(tab) {
+    // get on or off and maxnumber
+    let maxCount = 5
+    if (localStorage.config) {
+        let config = JSON.parse(localStorage.config)
+        if (config.most_app === false) {
+            return
+        } else {
+            maxCount = config.most_app_num ? config.most_app_num : 5
+        }
+    }
+    openDB().then(function (promiseValue) {
+        let dbobj = promiseValue
+        let trans = dbobj.transaction(["mostuseapp"], "readwrite")
+        let objectStore = trans.objectStore("mostuseapp")
+        let ind = objectStore.index("viewtimes")
+        let xx = {}
+        let readyToSendArray = []
+        let senderUrlObj = new URL(tab.url)
+
+        ind.openCursor(null, "prev").onsuccess = e => {
+            var cursor = event.target.result
+            if (cursor) {
+                xx.apphref = cursor.value.apphref
+                let xxUrlObj = new URL(xx.apphref)
+                xx.appname = cursor.value.appname
+                xx.viewtimes = cursor.value.viewtimes
+                if (senderUrlObj.host == xxUrlObj.host) {
+                    readyToSendArray.push(xx)
+                }
+                xx = {}
+                cursor.continue()
+            } else {
+                // no more results
+                let c = 0
+                for (var i in readyToSendArray) {
+                    c++
+                    if (c > maxCount) {
+                        // delete readyToSendArray[i]
+                        readyToSendArray.splice(i)
+                    }
+                }
+                chrome.tabs.sendMessage(tab.id, {
+                    most_used_app_enable: true,
+                    apps: readyToSendArray
+                }, null, function (response) {})
+            }
+        }
+    })
 }
 
 function doAfterCreated(tab) {
@@ -181,67 +223,6 @@ function doAfterCreated(tab) {
     }
 }
 
-function getMostUsedAppData(tab) {
-    // puckered
-    // let puckered = JSON.parse(localStorage.pucker)
-    // let mostAppPuckered = puckered ? puckered.most_app : false
-    // console.log(puckered)
-    // get on or off and maxnumber
-    let maxCount
-    if (localStorage.config != null) {
-        let config = JSON.parse(localStorage.config)
-        let mostAppEnable = config.most_app ? true : false
-        if (!mostAppEnable) return
-        maxCount = config.most_app_num
-    } else {
-        maxCount = 5
-    }
-    console.log("1")
-    openDB().then(function (promiseValue) {
-        let dbobj = promiseValue
-        console.log("2")
-        let trans = dbobj.transaction(["mostuseapp"], "readwrite")
-        console.log("3")
-        let objectStore = trans.objectStore("mostuseapp")
-        let ind = objectStore.index("viewtimes")
-        let xx = {}
-        let readyToSendArray = []
-        let senderUrlObj = new URL(tab.url)
-
-        ind.openCursor(null, "prev").onsuccess = e => {
-            var cursor = event.target.result
-            if (cursor) {
-                xx.apphref = cursor.value.apphref
-                let xxUrlObj = new URL(xx.apphref)
-                xx.appname = cursor.value.appname
-                xx.viewtimes = cursor.value.viewtimes
-                if (senderUrlObj.host == xxUrlObj.host) {
-                    readyToSendArray.push(xx)
-                }
-                xx = {}
-                cursor.continue()
-            } else {
-                // no more results
-                let c = 0
-                for (var i in readyToSendArray) {
-                    c++
-                    if (c > maxCount) {
-                        // delete readyToSendArray[i]
-                        readyToSendArray.splice(i)
-                    }
-                }
-                // console.log(readyToSendArray)
-                chrome.tabs.sendMessage(tab.id, {
-                    most_used_app_enable: true,
-                    apps: readyToSendArray
-                }, null, function (response) {
-                    // console.log(response)
-                })
-            }
-        }
-    })
-}
-
 chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
     if (changeInfo.status && changeInfo.status == "complete") {
         doAfterCreated(tab)
@@ -251,9 +232,14 @@ chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // console.log(message)
     if (message.mostusedapp) {
-        console.log("start most used app")
+        // console.log("start most used app")
         getMostUsedAppData(sender.tab)
         sendResponse("most used app request has been received. --by background")
+    }
+    if (message.utterHistory) {
+        console.log("start utter history")
+        isUtterHistoryEnable(sender.tab)
+        sendResponse("utter history request has been received. --by background")
     }
     if (message.bigusericon) {
         // console.log("start big user icon")

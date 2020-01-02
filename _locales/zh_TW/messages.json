@@ -26,6 +26,9 @@
     "optionEasyAtCusTextTitleName": {
         "message": "回覆標誌"
     },
+    "optionUtterHistoryTitleName": {
+        "message": "投稿歷史"
+    },
     "enableName": {
         "message": "啟用"
     },

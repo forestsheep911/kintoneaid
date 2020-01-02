@@ -26,6 +26,9 @@
     "optionEasyAtCusTextTitleName": {
         "message": "メンションマーク"
     },
+    "optionUtterHistoryTitleName": {
+        "message": "投稿歴史"
+    },
     "enableName": {
         "message": "有効"
     },

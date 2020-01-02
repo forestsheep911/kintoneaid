@@ -11,4 +11,5 @@
 
 .max-min-block.puckered {
     position: absolute;
+    user-select: none;
 }

@@ -30,8 +30,7 @@
             "https://*.cybozu.cn/k/*"
         ],
         "css": [
-            "css/bootstrap.css",
-            "css/dataTables.bootstrap4.min.css",
+            "css/jquery.dataTables.css",
             "css/dataTable.my.fav.css",
             "css/bigphoto.css",
             "css/myportal.css"
@@ -40,7 +39,6 @@
             "lib/jquery-3.4.1.min.js",
             "lib/crypto-js.js",
             "lib/datatables.min.js",
-            "lib/dataTables.bootstrap4.min.js",
             "js/csdb.js",
             "js/common_func.js",
             "js/mostuse_app_aid.js",
@@ -54,7 +52,8 @@
     "web_accessible_resources": [
         "js/ij.js",
         "icon/ddown.png",
-        "icon/dup.png"
+        "icon/dup.png",
+        "icon/*"
     ],
     "permissions": [
         "tabs",
@@ -64,5 +63,5 @@
         "https://*.cybozu.cn/k/*"
     ],
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "version": "0.0.1.0"
+    "version": "1.0.0.0"
 }

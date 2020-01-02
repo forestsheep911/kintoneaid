@@ -271,6 +271,8 @@ function puckerApp(puckered) {
     } catch (error) {}
 }
 
+
+
 function savePuckeredInfo(field, boolValue) {
     if (localStorage.kaidPuckered) {
         let puckerJson = JSON.parse(localStorage.kaidPuckered)
@@ -301,12 +303,8 @@ function saveUtter(saveobj) {
         let trans = dbobj.transaction(["utterance_history"], "readwrite")
         let objectStore = trans.objectStore("utterance_history")
         let requestput = objectStore.put(saveobj)
-        requestput.onsuccess = e => {
-            console.log(e)
-        }
-        requestput.onerror = e => {
-            console.log(e)
-        }
+        requestput.onsuccess = e => {}
+        requestput.onerror = e => {}
     })
 }
 
@@ -352,11 +350,26 @@ function getSaveSpaceUtterContent() {
         mentionUsersArray.push(oneUser)
     }
 
+    // get space and thread name
+    let spaceNameEles = document.getElementsByClassName("gaia-argoui-space-spacelayout-title")
+    let threadNameEles = document.getElementsByClassName("ocean-space-thread-name")
+    let spaceName = ""
+    let threadName = ""
+    if (spaceNameEles.length > 0) {
+        spaceName = spaceNameEles[0].innerText
+    }
+    if (threadNameEles.length > 0) {
+        threadName = threadNameEles[0].innerText
+    }
+    console.log(spaceNameEles)
+    console.log(threadNameEles)
 
     let saveobj = {
         CreateDateTime: new Date(),
         contentSummary: utterContentSummary,
         link: utterLink,
+        sourceType: "SPACE",
+        sourceName: spaceName + ":" + threadName,
         mentionUsers: mentionUsersArray
     }
     saveUtter(saveobj)
@@ -390,7 +403,7 @@ function getSaveAppUtterContent() {
     }
     let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
     if (!utterContentSummary) {
-        return false
+        utterContentSummary = ""
     }
     // mention users
     let mentionUsersArray = []
@@ -403,13 +416,22 @@ function getSaveAppUtterContent() {
         }
         mentionUsersArray.push(oneUser)
     }
+    // get app name
+    let appNameEles = document.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appName
+    if (appNameEles.length > 0) {
+        appName = appNameEles[0].innerText
+    }
+
+    // save
     let saveobj = {
         CreateDateTime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
+        sourceType: "APP",
+        sourceName: appName,
         mentionUsers: mentionUsersArray
     }
-    console.log(saveobj)
     saveUtter(saveobj)
     return true
 }
@@ -464,13 +486,20 @@ function getSaveNotiAppUtterContent() {
         }
         mentionUsersArray.push(oneUser)
     }
+    // get app name
+    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appName
+    if (appNameEles.length > 0) {
+        appName = appNameEles[0].innerText
+    }
     let saveobj = {
         CreateDateTime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
+        sourceType: "APP",
+        sourceName: appName,
         mentionUsers: mentionUsersArray
     }
-    console.log(saveobj)
     saveUtter(saveobj)
     return true
 }
@@ -487,6 +516,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     } else if (message.most_used_app_enable) {
         sendResponse("most use app list has been recived")
         showApps(message.apps)
+    } else if (message.utter_history_enable) {
+        sendResponse("utter history has been recived")
+        showUtter(loginUserId)
     } else if (message.customize_portal_enable) {
         sendResponse("customize portal has been recived")
         regionLinkUp()
@@ -496,6 +528,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         puckerAssigned(loadPuckeredInfo("assigned"))
         puckerSpace(loadPuckeredInfo("space"))
         puckerApp(loadPuckeredInfo("app"))
+        // 由于投稿的数据加载延迟，故不能在这里直接折叠most app 和 utterhistory
+        // 他们开启则默认定死可以折叠，不受custom portal控制
+        // 即custom portal只控制原生组件
     } else if (message.utterInSpace) {
         console.log("utter space")
         setTimeout(() => {
@@ -524,7 +559,12 @@ window.onmessage = function (event) {
         if (event.data.msg === "on.kintone.portal.show") {
             if ($('#mostusedapp').length > 0) {} else {
                 chrome.runtime.sendMessage(null, {
-                    "mostusedapp": true
+                    mostusedapp: true
+                }, null, function (response) {})
+            }
+            if ($('#utterHistory').length > 0) {} else {
+                chrome.runtime.sendMessage(null, {
+                    utterHistory: true
                 }, null, function (response) {})
             }
             // customize portal
@@ -532,11 +572,9 @@ window.onmessage = function (event) {
                 "customizeportal": true
             }, null, function (response) {})
             //utter under dev
-            showUtter(loginUserId)
+            // showUtter(loginUserId)
         } else if (event.data.msg === "kintone.getLoginUser") {
-            console.log(event.data.info)
             loginUserId = event.data.info.id
-            console.log(loginUserId)
         }
     }
 }

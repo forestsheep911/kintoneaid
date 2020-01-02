@@ -2,10 +2,9 @@ function showUtter(loginUserId) {
     let bodyright = $.find('.ocean-portal-body-left')
     let uh = document.createElement("div")
     uh.setAttribute("class", "ocean-portal-widget")
-    uh.setAttribute("id", "utter-history")
+    uh.setAttribute("id", "utterHistory")
+    // uh.setAttribute("onselectstart", "return false;")
     $(bodyright).prepend(uh)
-
-
 
     let widget = document.createElement("div")
     widget.setAttribute("class", "gaia-argoui-widget")
@@ -22,15 +21,13 @@ function showUtter(loginUserId) {
     menuTitle.innerText = "Utterance History"
     $(header).append(menuTitle)
 
-    // test table
-
-    let tableStruct = '<table id="example" class="table table-striped table-bordered" style="width:100%"><thead></thead><tbody></tbody></table>'
+    let tableStruct = '<table id="uhtable" class="display" style="width:100%"><thead></thead><tbody></tbody></table>'
     $(widget).append(tableStruct)
 
     //list
-    let listui = document.createElement("ui")
-    listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
-    $(widget).append(listui)
+    // let listui = document.createElement("ui")
+    // listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
+    // $(widget).append(listui)
 
     openDB().then(function (promiseValue) {
         let dbobj = promiseValue
@@ -43,26 +40,39 @@ function showUtter(loginUserId) {
             if (cursor) {
                 if (loginUserId == cursor.value.utterUserId) {
                     let fillobj = {}
-                    // let listlItem = document.createElement("li")
-                    // $(listui).append(listlItem)
 
                     let utterContentAndHref = document.createElement("a")
-                    utterContentAndHref.setAttribute("style", "margin-left:20px")
+                    // utterContentAndHref.setAttribute("style", "margin-left:5px")
                     utterContentAndHref.innerText = Decrypt(cursor.value.contentSummary)
                     utterContentAndHref.href = Decrypt(cursor.value.link)
-                    // $(listlItem).append(utterContentAndHref)
-                    // fillobj.utterence = Decrypt(cursor.value.contentSummary)
+                    utterContentAndHref.setAttribute("style", "white-space:nowrap;")
                     fillobj.utterence = utterContentAndHref.outerHTML
-                    console.log(utterContentAndHref.outerHTML)
 
-                    let createDateTime = document.createElement("span")
-                    createDateTime.setAttribute("style", "position: absolute; top:0; right:8px; max-width: 200px; white-space: nowrap; overflow:hidden; text-align: right")
-                    createDateTime.innerText = cursor.value.CreateDateTime.Format("yyyy-MM-dd hh:mm:ss")
-                    // $(listlItem).append(createDateTime)
-                    fillobj.datetime = cursor.value.CreateDateTime.Format("yyyy-MM-dd hh:mm:ss")
+                    let createDateTimeEle = document.createElement("span")
+                    createDateTimeEle.setAttribute("style", "white-space:nowrap;overflow:hidden; text-align:right")
+                    createDateTimeEle.innerText = cursor.value.CreateDateTime.Format("yyyy-MM-dd hh:mm:ss")
+                    fillobj.datetime = createDateTimeEle.outerHTML
 
+                    fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
+
+                    if (cursor.value.sourceType === "APP") {
+                        let imgEle = document.createElement("div")
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.cn/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        let mojiEle = document.createElement("span")
+                        mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
+                        imgEle.appendChild(mojiEle)
+                        fillobj.sourceName = imgEle.outerHTML
+                    } else if (cursor.value.sourceType === "SPACE") {
+                        let imgEle = document.createElement("div")
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.cn/contents/k/image/argo/uiparts/widget/spaces_56.png"); background-position: left top;background-repeat:no-repeat;background-size:25px;max-width:240px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        let mojiEle = document.createElement("span")
+                        mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
+                        imgEle.appendChild(mojiEle)
+                        fillobj.sourceName = imgEle.outerHTML
+                    } else {
+                        fillobj.sourceName = "unknow"
+                    }
                     fillarraywithinobj.push(fillobj)
-                    console.log(fillarraywithinobj)
 
                     cursor.continue()
                 } else {
@@ -70,35 +80,107 @@ function showUtter(loginUserId) {
                 }
             } else {
                 // no more results
-                console.log(fillarraywithinobj)
-                $('#example').DataTable({
+                $('#uhtable').DataTable({
+                    stateSave: true,
                     info: true,
                     searching: true,
-                    scrollY: true,
-                    scrollX: true,
+                    scrollY: false,
+                    scrollX: false,
+                    pagingType: "full_numbers",
+                    lengthMenu: [3, 5, 8, 13, 21, 34, 55],
                     data: fillarraywithinobj,
                     autoWidth: false,
                     order: [
-                        [1, "desc"],
+                        [3, "desc"],
                     ],
                     columnDefs: [{
                         targets: 0,
-                        type: "html"
+                        type: "html",
+                        width: "100px"
                     }, {
                         targets: 1,
-                        width: "160px"
+                        width: "240px"
+                    }, {
+                        targets: 2,
+                        type: "html",
+                        width: "50px"
+                    }, {
+                        targets: 3,
+                        type: "html",
+                        className: "uhtable_col_datetime",
+                        width: "120px"
                     }],
                     columns: [{
                             data: "utterence",
                             title: "utterence"
                         },
                         {
+                            data: "mention",
+                            title: "mention"
+                        }, {
+                            data: "sourceName",
+                            title: "sourceName"
+                        }, {
                             data: "datetime",
-                            title: "datatime"
+                            title: "datatime",
                         }
                     ]
                 })
+                puckerUh(loadPuckeredInfo("uh"))
             }
         }
     })
+}
+
+function getMentionUsersId(inArray) {
+    let outPutString = ""
+    for (let i = 0; i < inArray.length; i++) {
+        if (i > 0) {
+            outPutString += " "
+        }
+        outPutString += inArray[i].name
+    }
+    if (outPutString.length > 20) {
+        outPutString = outPutString.substring(0, 17) + "..."
+    }
+    return outPutString
+}
+
+function puckerUh(puckered) {
+    try {
+        let uh = this.document.getElementById("utterHistory")
+        let uhHeader = uh.getElementsByClassName("gaia-argoui-widget-header")[0]
+        let uhBody = this.document.getElementById("uhtable_wrapper")
+        let invisibleButton = document.createElement("a")
+        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("class", "max-min-block")
+        invisibleButton.setAttribute("style", "user-select:none;")
+        invisibleButton.onclick = () => {
+            let uhPuckered
+            $(invisibleButton).toggleClass("puckered")
+            if ($(invisibleButton).hasClass('puckered')) {
+                uhPuckered = true
+                invisibleButton.style.backgroundImage = puckeredImgUrl
+                invisibleButton.setAttribute("title", "展开")
+                uhBody.style.display = "none"
+            } else {
+                uhPuckered = false
+                invisibleButton.style.backgroundImage = unPuckeredImgUrl
+                invisibleButton.setAttribute("title", "收起")
+                uhBody.style.display = "block"
+            }
+            savePuckeredInfo("uh", uhPuckered)
+        }
+        uhHeader.appendChild(invisibleButton)
+        if (puckered) {
+            $(invisibleButton).toggleClass("puckered")
+            invisibleButton.style.backgroundImage = puckeredImgUrl
+            invisibleButton.setAttribute("title", "展开")
+            uhBody.style.display = "none"
+        } else {
+            invisibleButton.style.backgroundImage = unPuckeredImgUrl
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }

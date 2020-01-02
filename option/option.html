@@ -77,6 +77,19 @@
                 <input id="tc32" type="number" class="option_item_input inactive" v-model.number="config.most_app_num"
                     v-on:change="tx1" :disabled="!config.most_app"></span>
             </div>
+            <div id="bc5" class="switch" v-on:click="bt5">
+                <div class="content inactive">{{ utterHistoryTitle }}</div>
+                <div class="button-wrapper">
+                    <div id="utter_history_sw" class="button inactive">
+                        <div class="label">{{ enableName }}</div>
+                        <div class="depth"></div>
+                    </div>
+                    <div class="button">
+                        <div class="label">{{ disableName }}</div>
+                        <div class="depth"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
