@@ -474,7 +474,7 @@ table.dataTable td {
   /* IE10+ */
   background: -o-linear-gradient(top, #585858 0%, #111 100%);
   /* Opera 11.10+ */
-  background: linear-gradient(to bottom, #f8f0ce 0%, rgb(221, 236, 151) 100%);
+  background: linear-gradient(to bottom, #1947dd 0%, rgb(78, 135, 199) 100%);
   /* W3C */
 }
 

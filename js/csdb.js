@@ -15,12 +15,24 @@ function openDB() {
                 // console.log("Error upgrade database.")
             }
             if (event.oldVersion < 1) {
-                let objectStore = db.createObjectStore("utterance_history", {
+                let objectStore1 = db.createObjectStore("utterance_history", {
                     autoIncrement: true
                 })
-                console.log(objectStore)
-                console.log("objectStore cerated")
-                objectStore.createIndex("cdt", "CreateDateTime", {
+                objectStore1.createIndex("idx_create_datetime", "create_datetime", {
+                    unique: false
+                })
+
+                db.createObjectStore("app_master", {
+                    keyPath: "app_id"
+                })
+
+                let objectStore2 = db.createObjectStore("app_history", {
+                    autoIncrement: true
+                })
+                objectStore2.createIndex("idx_id", "app_id", {
+                    unique: false
+                })
+                objectStore2.createIndex("idx_view_datetime", "view_datetime", {
                     unique: false
                 })
             }

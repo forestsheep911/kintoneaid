@@ -8,6 +8,12 @@
     "mostUsedAppName": {
         "message": "よく使うアプリ"
     },
+    "lastUsedAppName": {
+        "message": "最後に使ったアプリ"
+    },
+    "mostUsedAppNoRecordsName": {
+        "message": "kintone 援助がインストールされてからまだアプリがアクセスされていません"
+    },
     "optionBigUserIconName": {
         "message": "ユーザーアイコン拡大"
     },
@@ -58,6 +64,15 @@
     },
     "UtterHistoryzeroRecordsName": {
         "message": "表示内容なし"
+    },
+    "portalPuckerName": {
+        "message": "折り畳む"
+    },
+    "portalExpandName": {
+        "message": "展開する"
+    },
+    "portalSwitchName": {
+        "message": "切替"
     },
     "enableName": {
         "message": "有効"

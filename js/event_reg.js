@@ -1,9 +1,5 @@
-let puckeredImgUrl = "url(" + chrome.extension.getURL('icon/ddown.png') + ")"
-let unPuckeredImgUrl = "url(" + chrome.extension.getURL('icon/dup.png') + ")"
-let loginUserId
-
 window.onload = function () {
-    // console.log("after onload")
+    // console.log(location.href)
 }
 
 window.addEventListener('popstate', function (e) {
@@ -11,15 +7,13 @@ window.addEventListener('popstate', function (e) {
 })
 
 window.onhashchange = () => {
-    console.log("onhashchange")
+    countAccessedPages();
     setTimeout(() => {
         // easy at
-        console.log("start easy at inject in hash change")
         chrome.runtime.sendMessage(null, {
             "easyat": true
         }, null, function (response) {})
         // big user icon
-        console.log("start big user icon inject in hash change")
         chrome.runtime.sendMessage(null, {
             "bigusericon": true
         }, null, function (response) {})
@@ -69,7 +63,7 @@ function puckerAnnouncement(puckered) {
         let annBody = ann.getElementsByClassName("gaia-argoui-widget-body")[0]
         let annFooter = ann.getElementsByClassName("gaia-argoui-widget-footer")[0]
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.onclick = () => {
             $(invisibleButton).toggleClass("puckered")
@@ -77,13 +71,13 @@ function puckerAnnouncement(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 annPuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 annBody.style.display = "none"
                 annFooter.style.display = "none"
             } else {
                 annPuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 annBody.style.display = "block"
                 annFooter.style.display = "block"
             }
@@ -93,7 +87,7 @@ function puckerAnnouncement(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             annBody.style.display = "none"
             annFooter.style.display = "none"
         } else {
@@ -113,7 +107,7 @@ function puckerNotification(puckered) {
         let notiBody = noti.getElementsByClassName("gaia-argoui-widget-body")[0]
         let notiFooter = noti.getElementsByClassName("gaia-argoui-widget-footer")[0]
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.onclick = () => {
             let notiPuckered
@@ -121,14 +115,14 @@ function puckerNotification(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 notiPuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 notiMenu.style.display = "none"
                 notiBody.style.display = "none"
                 notiFooter.style.display = "none"
             } else {
                 notiPuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 notiMenu.style.display = "block"
                 notiBody.style.display = "block"
                 notiFooter.style.display = "block"
@@ -139,7 +133,7 @@ function puckerNotification(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             notiMenu.style.display = "none"
             notiBody.style.display = "none"
             notiFooter.style.display = "none"
@@ -155,7 +149,7 @@ function puckerAssigned(puckered) {
         let assHeader = assigned.getElementsByClassName("gaia-argoui-widget-header")[0]
         let assBody = assigned.getElementsByClassName("gaia-argoui-widget-body")[0]
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.onclick = () => {
             let assPuckered
@@ -163,12 +157,12 @@ function puckerAssigned(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 assPuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 assBody.style.display = "none"
             } else {
                 assPuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 assBody.style.display = "block"
             }
             savePuckeredInfo("assigned", assPuckered)
@@ -177,7 +171,7 @@ function puckerAssigned(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             assBody.style.display = "none"
         } else {
             invisibleButton.style.backgroundImage = unPuckeredImgUrl
@@ -192,7 +186,7 @@ function puckerSpace(puckered) {
         let spaceMenu = space.getElementsByClassName("gaia-argoui-widget-menu")[0]
         let spaceBody = space.getElementsByClassName("gaia-argoui-widget-body")[0]
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.onclick = () => {
             let spacePuckered
@@ -200,13 +194,13 @@ function puckerSpace(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 spacePuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 spaceMenu.style.display = "none"
                 spaceBody.style.display = "none"
             } else {
                 spacePuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 spaceMenu.style.display = "block"
                 spaceBody.style.display = "block"
             }
@@ -216,7 +210,7 @@ function puckerSpace(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             spaceMenu.style.display = "none"
             spaceBody.style.display = "none"
         } else {
@@ -235,7 +229,7 @@ function puckerApp(puckered) {
         let appMenu = app.getElementsByClassName("gaia-argoui-widget-menu")[0]
         let appBody = app.getElementsByClassName("gaia-argoui-widget-body")[0]
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.onclick = () => {
             let appPuckered
@@ -243,13 +237,13 @@ function puckerApp(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 appPuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 appMenu.style.display = "none"
                 appBody.style.display = "none"
             } else {
                 appPuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 appMenu.style.display = "block"
                 appBody.style.display = "block"
             }
@@ -259,7 +253,7 @@ function puckerApp(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             appMenu.style.display = "none"
             appBody.style.display = "none"
         } else {
@@ -269,25 +263,6 @@ function puckerApp(puckered) {
         let appAddButton = this.document.getElementsByClassName("ocean-portal-applist-newapp")
         appAddButton[0].style.right = "48px"
     } catch (error) {}
-}
-
-
-
-function savePuckeredInfo(field, boolValue) {
-    if (localStorage.kaidPuckered) {
-        let puckerJson = JSON.parse(localStorage.kaidPuckered)
-        puckerJson[field] = boolValue
-        localStorage.kaidPuckered = JSON.stringify(puckerJson)
-    } else {
-        let jsonPass = {}
-        jsonPass[field] = boolValue
-        localStorage.kaidPuckered = JSON.stringify(jsonPass)
-    }
-}
-
-function loadPuckeredInfo(field) {
-    let puckeredInfo = JSON.parse(localStorage.kaidPuckered ? localStorage.kaidPuckered : "{}")
-    return puckeredInfo ? puckeredInfo[field] ? true : false : false
 }
 
 function saveUtter(saveobj) {
@@ -309,14 +284,12 @@ function saveUtter(saveobj) {
 }
 
 function getSaveSpaceUtterContent() {
-    console.log("utter in space found")
-    // space的通知貌似并不是用iframe做的，所以不必像app那样分开取，这里一次都能取道
+    // space的通知貌似并不是用iframe做的，所以不必像app那样分开取，这里一次都能取到
     // link
     let utterLink
     let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
 
     utterLink = commentTimes.length > 0 ? commentTimes[0].firstChild.href : null
-    console.log(utterLink)
     if (!utterLink) {
         return false
     }
@@ -327,9 +300,6 @@ function getSaveSpaceUtterContent() {
     let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
     if (!firstCommentText) {
         return false
-    }
-    if (firstCommentText.innerText === "\n") {
-        console.log("huiche")
     }
     let commentTextClone = firstCommentText.cloneNode(true)
     let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
@@ -362,13 +332,14 @@ function getSaveSpaceUtterContent() {
         spaceName = spaceNameEles[0].innerText
     }
     if (threadNameEles.length > 0) {
-        threadName = threadNameEles[0].innerText
+        // 如果是单thread space，则thread name的class中会有"assistive-text"
+        if (!$(threadNameEles[0]).hasClass("assistive-text")) {
+            threadName = threadNameEles[0].innerText
+        }
     }
-    console.log(spaceNameEles)
-    console.log(threadNameEles)
 
     let saveobj = {
-        CreateDateTime: new Date(),
+        create_datetime: new Date(),
         contentSummary: utterContentSummary,
         link: utterLink,
         sourceType: "SPACE",
@@ -429,7 +400,7 @@ function getSaveAppUtterContent() {
 
     // save
     let saveobj = {
-        CreateDateTime: new Date(),
+        create_datetime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
@@ -497,7 +468,7 @@ function getSaveNotiAppUtterContent() {
         appName = appNameEles[0].innerText
     }
     let saveobj = {
-        CreateDateTime: new Date(),
+        create_datetime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
@@ -518,8 +489,8 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
             atinject(message.easy_at_mention_mark)
         }, 2200);
     } else if (message.most_used_app_enable) {
-        sendResponse("most use app list has been recived")
-        showApps(message.apps)
+        // sendResponse("most use app list has been recived")
+        // showApps(message.apps)
     } else if (message.utter_history_enable) {
         sendResponse("utter history has been recived")
         showUtter(loginUserId)
@@ -536,7 +507,6 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         // 他们开启则默认定死可以折叠，不受custom portal控制
         // 即custom portal只控制原生组件
     } else if (message.utterInSpace) {
-        console.log("utter space")
         setTimeout(() => {
             getSaveSpaceUtterContent()
         }, 200);
@@ -561,12 +531,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 window.onmessage = function (event) {
     if (event.data.id === "aifcogmioeencjbmlgcfnfkgffahnmpf") {
         if (event.data.msg === "on.kintone.portal.show") {
-            if ($('#mostusedapp').length > 0) {} else {
-                chrome.runtime.sendMessage(null, {
-                    mostusedapp: true
-                }, null, function (response) {})
+            if ($('#mostusedapp').length <= 0) {
+                showApps()
             }
-            if ($('#utterHistory').length > 0) {} else {
+            if ($('#utterHistory').length <= 0) {
                 chrome.runtime.sendMessage(null, {
                     utterHistory: true
                 }, null, function (response) {})
@@ -575,8 +543,8 @@ window.onmessage = function (event) {
             chrome.runtime.sendMessage(null, {
                 "customizeportal": true
             }, null, function (response) {})
-            //utter under dev
-            // showUtter(loginUserId)
+            // app_view_history
+
         } else if (event.data.msg === "kintone.getLoginUser") {
             loginUserId = event.data.info.id
         }

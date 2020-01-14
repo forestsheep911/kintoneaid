@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(function (details) {
-    console.log(details)
+    // console.log(details)
     if (!localStorage.config) {
         localStorage.config = JSON.stringify({
             cus_por: true,

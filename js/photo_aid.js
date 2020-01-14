@@ -226,6 +226,8 @@ function photoinject() {
     }
 }
 
-chrome.runtime.sendMessage(null, {
-    "bigusericon": true
-}, null, function (response) {})
+function startBigPhoto() {
+    chrome.runtime.sendMessage(null, {
+        "bigusericon": true
+    }, null, function (response) {})
+}

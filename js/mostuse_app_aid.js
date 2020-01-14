@@ -1,6 +1,182 @@
-let showApps = function (mostapp) {
+function showApps() {
+    // most used app
+    let seeMostApp = loadAppUsageInfo("see_most_app")
+    if (seeMostApp) {
+        getMostUsedAppIdAndScore().then(matchAndGetAppName).then(render)
+    } else {
+        // last used app
+        getLastUsedApp().then(matchAndGetAppName).then(render)
+    }
+}
+
+// most used app method
+function getMostUsedAppIdAndScore() {
+    return new Promise((resolve, reject) => {
+        openDB().then(function (promiseValue) {
+            let dbObj = promiseValue
+            let trans = dbObj.transaction(["app_history"], "readonly")
+            let objectStore_history = trans.objectStore("app_history")
+            let req = objectStore_history.getAll()
+            req.onsuccess = (event) => {
+                console.log(event.target.result)
+                let inArray = event.target.result
+                let atLastResult = [];
+                inArray.reduce(function (res, value) {
+                    if (!res[value.app_id]) {
+                        res[value.app_id] = {
+                            id: value.app_id,
+                            score: 0
+                        }
+                        atLastResult.push(res[value.app_id])
+                    }
+                    res[value.app_id].score += value.app_view_type
+                    return res;
+                }, {})
+                console.log(atLastResult)
+                atLastResult.sort((one, two) => {
+                    return two.score - one.score
+                })
+                resolve([atLastResult, "most"])
+            }
+        })
+    })
+}
+
+function getLastUsedApp() {
+    return new Promise((resolve, reject) => {
+        openDB().then(function (promiseValue) {
+            let dbObj = promiseValue
+            let trans = dbObj.transaction(["app_history"], "readonly")
+            let objectStore_history = trans.objectStore("app_history")
+            let ind = objectStore_history.index("idx_view_datetime")
+            let resultArray = []
+            let upLimit = 15
+            let lastId
+            let found
+            ind.openCursor(null, "prev").onsuccess = e => {
+                let cursor = event.target.result
+                if (cursor) {
+                    found = resultArray.find((element) => {
+                        return element.id === cursor.value.app_id
+                    })
+                    if (!found) {
+                        resultArray.push({
+                            id: cursor.value.app_id,
+                            last_time: cursor.key
+                        })
+                        // console.log(resultArray)
+                        if (resultArray.length === upLimit) {
+                            resolve([resultArray, "last"])
+                            return
+                        } else {
+                            lastId = cursor.value.app_id
+                        }
+                    }
+                    cursor.continue()
+                } else {
+                    console.log([resultArray, "last"])
+                    resolve([resultArray, "last"])
+                }
+            }
+        })
+    })
+}
+
+// get most used app backup method
+function getIdAndScore(resolve, rejct) {
+    openDB().then(function (promiseValue) {
+        let lastId
+        let dbObj = promiseValue
+        let trans = dbObj.transaction(["app_history"], "readonly")
+        let objectStore_history = trans.objectStore("app_history")
+        let ind = objectStore_history.index("idx_id")
+        let resultArray = []
+        ind.openCursor().onsuccess = e => {
+            let cursor = event.target.result
+            if (cursor) {
+                let id = cursor.key
+                let type = cursor.value.app_view_type
+                if (lastId === id) {
+                    let oldScore = resultArray[resultArray.length - 1].score
+                    resultArray[resultArray.length - 1].score = oldScore + type
+                } else {
+                    lastId = id
+                    resultArray.push({
+                        id: id,
+                        score: type
+                    })
+                }
+                cursor.continue()
+            } else {
+                // no more records
+                resolve(resultArray)
+            }
+        }
+    })
+}
+
+function matchAndGetAppName(param) {
+    let inArray = param[0]
+    let mostOrLast = param[1]
+    return new Promise((resolve, reject) => {
+        let promiseArray = []
+        for (let i = 0; i < inArray.length; i++) {
+            /*jshint -W083 */
+            promiseArray.push(
+                new Promise((resolve, reject) => {
+                    openDB().then(function (promiseValue) {
+                        let dbObj = promiseValue
+                        let trans = dbObj.transaction(["app_master"], "readonly")
+                        let objectStore_app_master = trans.objectStore("app_master")
+                        let request = objectStore_app_master.get(inArray[i].id);
+                        request.onsuccess = (event) => {
+                            inArray[i].name = event.target.result.app_name
+                            resolve()
+                        }
+                    })
+                })
+            )
+        }
+        Promise.all(promiseArray).then(() => {
+            inArray.sort(function (a, b) {
+                return b.score - a.score
+            })
+            resolve([inArray, mostOrLast])
+        })
+    })
+}
+
+function reRenderList(param, listui) {
+    let dataArray = param[0]
+    let mostOrLast = param[1]
+    if (dataArray.length === 0) {
+        listui.innerText = chrome.i18n.getMessage("mostUsedAppNoRecordsName")
+    } else {
+        for (var i in dataArray) {
+            let listli = document.createElement("li")
+            $(listui).append(listli)
+            let itemHref = document.createElement("a")
+            itemHref.setAttribute("class", "gaia-argoui-appscrollinglist-item")
+            itemHref.href = "/k/" + dataArray[i].id
+            $(listli).append(itemHref)
+            let bspan1 = document.createElement("span")
+            bspan1.setAttribute("class", "gaia-argoui-appscrollinglist-name")
+            if (mostOrLast === "most") {
+                bspan1.innerText = dataArray[i].name + "(" + dataArray[i].score + ")"
+            }
+            if (mostOrLast === "last") {
+                bspan1.innerText = dataArray[i].name
+            }
+            $(itemHref).append(bspan1)
+        }
+    }
+}
+
+function render(param) {
+    let dataArray = param[0]
+    let mostOrLast = param[1]
+    // show
     let bodyright = $.find('.ocean-portal-body-right')
-    // console.log(bodyright)
     let rp = document.createElement("div")
     rp.setAttribute("class", "ocean-portal-widget")
     rp.setAttribute("id", "mostusedapp")
@@ -24,24 +200,37 @@ let showApps = function (mostapp) {
     let listui = document.createElement("ui")
     listui.setAttribute("class", "gaia-argoui-appscrollinglist-list")
     $(appList).append(listui)
-
-    for (var i in mostapp) {
-        let listli1 = document.createElement("li")
-        $(listui).append(listli1)
-        let b1 = document.createElement("a")
-        b1.setAttribute("class", "gaia-argoui-appscrollinglist-item")
-        b1.href = mostapp[i].apphref
-        $(listli1).append(b1)
-        let bspan1 = document.createElement("span")
-        bspan1.setAttribute("class", "gaia-argoui-appscrollinglist-name")
-        bspan1.innerText = mostapp[i].appname + "(" + mostapp[i].viewtimes + ")"
-        $(b1).append(bspan1)
+    if (dataArray.length === 0) {
+        if (mostOrLast === "most") {
+            listui.innerText = chrome.i18n.getMessage("mostUsedAppNoRecordsName")
+        }
+        if (mostOrLast === "last") {
+            listui.innerText = chrome.i18n.getMessage("lastUsedAppNoRecordsName")
+        }
+    } else {
+        for (var i in dataArray) {
+            let listli = document.createElement("li")
+            $(listui).append(listli)
+            let itemHref = document.createElement("a")
+            itemHref.setAttribute("class", "gaia-argoui-appscrollinglist-item")
+            itemHref.href = "/k/" + dataArray[i].id
+            $(listli).append(itemHref)
+            let bspan1 = document.createElement("span")
+            bspan1.setAttribute("class", "gaia-argoui-appscrollinglist-name")
+            // bspan1.innerText = mostapp[i].appname + "(" + mostapp[i].viewtimes + ")"
+            if (mostOrLast === "most") {
+                bspan1.innerText = dataArray[i].name + "(" + dataArray[i].score + ")"
+            }
+            if (mostOrLast === "last") {
+                bspan1.innerText = dataArray[i].name
+            }
+            $(itemHref).append(bspan1)
+        }
     }
-
     // pucker button
     let invisibleButton = document.createElement("a")
     invisibleButton.style.backgroundImage = unPuckeredImgUrl
-    invisibleButton.setAttribute("title", "收起")
+    invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
     invisibleButton.setAttribute("class", "max-min-block")
     invisibleButton.onclick = () => {
         let mostAppPuckered
@@ -49,12 +238,12 @@ let showApps = function (mostapp) {
         if ($(invisibleButton).hasClass('puckered')) {
             mostAppPuckered = true
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             listui.style.display = "none"
         } else {
             mostAppPuckered = false
             invisibleButton.style.backgroundImage = unPuckeredImgUrl
-            invisibleButton.setAttribute("title", "收起")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
             listui.style.display = "block"
         }
         savePuckeredInfo("most_app", mostAppPuckered)
@@ -63,9 +252,140 @@ let showApps = function (mostapp) {
     if (loadPuckeredInfo("most_app")) {
         $(invisibleButton).toggleClass("puckered")
         invisibleButton.style.backgroundImage = puckeredImgUrl
-        invisibleButton.setAttribute("title", "展开")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
         listui.style.display = "none"
     } else {
         invisibleButton.style.backgroundImage = unPuckeredImgUrl
     }
+
+    // switch most last
+    let switchButton = document.createElement("a")
+    switchButton.style.backgroundImage = doubleArrowImgUrl
+    switchButton.setAttribute("title", chrome.i18n.getMessage("portalSwitchName"))
+    switchButton.setAttribute("class", "max-min-block")
+    switchButton.style.right = "48px"
+    appHeader.appendChild(switchButton)
+
+    switchButton.onclick = () => {
+        $(listui).empty()
+        $(switchButton).toggleClass("sw")
+        if ($(switchButton).hasClass('sw')) {
+            getLastUsedApp().then(matchAndGetAppName).then((par) => {
+                reRenderList(par, listui)
+                appheadername.innerText = chrome.i18n.getMessage("lastUsedAppName")
+            })
+            saveAppUsageInfo("see_most_app", false)
+        } else {
+            getMostUsedAppIdAndScore().then(matchAndGetAppName).then((par) => {
+                reRenderList(par, listui)
+                appheadername.innerText = chrome.i18n.getMessage("mostUsedAppName")
+            })
+            saveAppUsageInfo("see_most_app", true)
+        }
+    }
+}
+
+function countAccessedPages() {
+    console.log(location.href)
+    let UrlObj = new URL(location.href)
+    console.log(UrlObj)
+    // pathname patten like "/k/23"
+    let ptnPathApp = new RegExp(/^\/k\/(\d+)(.*)$/g)
+    let matPathApp = ptnPathApp.exec(UrlObj.pathname)
+    // console.log(UrlObj.pathname)
+    if (matPathApp && matPathApp.length > 2) {
+        console.log("is app")
+        let appIdNumber = matPathApp[1]
+        let appOtherInfo = matPathApp[2]
+        let appRealName = ""
+        let appViewType = 1
+        if (appOtherInfo.indexOf("show") != -1 || appOtherInfo.indexOf("edit") != -1) {
+            // record
+            appViewType = 1
+            let appBreadNameEles = document.getElementsByClassName("gaia-argoui-app-breadcrumb-item gaia-argoui-app-breadcrumb-link")
+            if (appBreadNameEles.length > 0) {
+                for (let ix = 0; ix < appBreadNameEles.length; ix++) {
+                    let href = appBreadNameEles[ix].getAttribute("href")
+                    let ptnHref = new RegExp(/^\/k\/\d+\/$/g)
+                    let matchHref = ptnHref.exec(href)
+                    if (matchHref && matchHref.length > 0) {
+                        appRealName = appBreadNameEles[ix].innerText
+                        break
+                    }
+                }
+            }
+        } else {
+            // list
+            appViewType = 5
+            let appRealNameEles = document.getElementsByClassName("gaia-argoui-app-breadcrumb-item")
+            if (appRealNameEles.length > 0) {
+                appRealName = appRealNameEles[appRealNameEles.length - 1].innerText
+            }
+        }
+        let saveMasterObj = {
+            app_id: appIdNumber,
+            app_name: appRealName
+        }
+        let saveHistoryObj = {
+            app_id: appIdNumber,
+            app_view_type: appViewType,
+            view_datetime: new Date()
+        }
+        openDB().then(function (promiseValue) {
+            let dbObj = promiseValue
+            let trans = dbObj.transaction(["app_master", "app_history"], "readwrite")
+            let objectStore_app_master = trans.objectStore("app_master")
+            let requestput1 = objectStore_app_master.put(saveMasterObj)
+            requestput1.onsuccess = e => {}
+            requestput1.onerror = e => {}
+            let objectStore_app_history = trans.objectStore("app_history")
+            let requestput2 = objectStore_app_history.put(saveHistoryObj)
+            requestput2.onsuccess = e => {}
+            requestput2.onerror = e => {}
+        })
+    }
+
+    // hash patten like "/#/space/1/thread/1"
+    let ptnPathSpace = new RegExp(/^#\/space\/\d+.*$/g)
+    let matchPathSpace = ptnPathSpace.exec(UrlObj.hash)
+    if (matchPathSpace && matchPathSpace.length > 0) {
+        console.log(matchPathSpace)
+        console.log("is space")
+    }
+
+    // hash patten like "/#/ntf/mention/k/a:40:2:/136"
+    let ptnPathAppInNoti = new RegExp(/^#\/ntf\/mention\/k\/a.*$/g)
+    let matchPathAppInNoti = ptnPathAppInNoti.exec(UrlObj.hash)
+    if (matchPathAppInNoti && matchPathAppInNoti.length > 0) {
+        console.log(matchPathAppInNoti)
+        console.log("is app in notification")
+    }
+
+    // hash patten like "/#/ntf/mention/k/space/s:40:2:/136"
+    let ptnPathSpaceInNoti = new RegExp(/^#\/ntf\/mention\/k\/space\/s.*$/g)
+    let matchPathSpaceInNoti = ptnPathSpaceInNoti.exec(UrlObj.hash)
+    if (matchPathSpaceInNoti && matchPathSpaceInNoti.length > 0) {
+        console.log(matchPathSpaceInNoti)
+        console.log("is space in notification")
+    }
+}
+
+function timeFn(d1) { //di作为一个变量传进来
+    //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
+    // var dateBegin = new Date(d1.replace(/-/g, "/")); //将-转化为/，使用new Date
+    // var dateBegin = new Date(d1)
+    var dateBegin = d1
+    var dateEnd = new Date(); //获取当前时间
+    var dateDiff = dateEnd.getTime() - dateBegin.getTime(); //时间差的毫秒数
+    var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+    var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+    var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+    //计算相差分钟数
+    var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+    var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+    //计算相差秒数
+    var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+    var seconds = Math.round(leave3 / 1000)
+    console.log(" 相差 " + dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒")
+    return (dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒" + " 前")
 }

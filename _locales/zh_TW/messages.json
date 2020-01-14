@@ -8,6 +8,12 @@
     "mostUsedAppName": {
         "message": "最常用應用"
     },
+    "lastUsedAppName": {
+        "message": "最近使用的應用"
+    },
+    "mostUsedAppNoRecordsName": {
+        "message": "自從kintone 助手安裝以來，還沒有使用過任何應用"
+    },
     "optionBigUserIconName": {
         "message": "用戶頭像放大"
     },
@@ -58,6 +64,15 @@
     },
     "UtterHistoryzeroRecordsName": {
         "message": "無結果顯示"
+    },
+    "portalPuckerName": {
+        "message": "收起"
+    },
+    "portalExpandName": {
+        "message": "展開"
+    },
+    "portalSwitchName": {
+        "message": "切換"
     },
     "enableName": {
         "message": "啟用"

@@ -14,8 +14,8 @@ Date.prototype.Format = function (fmt) { //author: meizz
     return fmt
 }
 
-const key = CryptoJS.enc.Utf8.parse("1234123412ABCDEF")
-const iv = CryptoJS.enc.Utf8.parse('ABCDEF1234123412')
+const key = CryptoJS.enc.Utf8.parse("aifcogmioeencjbmlgcfnfkgffahnmpf")
+const iv = CryptoJS.enc.Utf8.parse("34211706798214808651")
 
 //解密方法
 function Decrypt(word) {

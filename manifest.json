@@ -41,12 +41,14 @@
             "lib/datatables.min.js",
             "js/csdb.js",
             "js/common_func.js",
+            "js/business.js",
             "js/mostuse_app_aid.js",
             "js/utter_history.js",
-            "js/event_reg.js",
             "js/photo_aid.js",
             "js/at_aid.js",
-            "js/insert_js.js"
+            "js/event_reg.js",
+            "js/insert_js.js",
+            "js/inject_exe.js"
         ]
     }],
     "web_accessible_resources": [

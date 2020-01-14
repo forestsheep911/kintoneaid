@@ -115,6 +115,8 @@ function doloop(finduserhref, isNoti, atMarkString) {
     }
 }
 
-chrome.runtime.sendMessage(null, {
-    "easyat": true
-}, null, function (response) {})
+function startEasyAt() {
+    chrome.runtime.sendMessage(null, {
+        "easyat": true
+    }, null, function (response) {})
+}

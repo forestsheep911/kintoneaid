@@ -8,6 +8,12 @@
     "mostUsedAppName": {
         "message": "Most Used App"
     },
+    "lastUsedAppName": {
+        "message": "Last Used App"
+    },
+    "mostUsedAppNoRecordsName": {
+        "message": "no apps have been used since kintone aid was installed"
+    },
     "optionBigUserIconName": {
         "message": "Big User Icon"
     },
@@ -58,6 +64,15 @@
     },
     "UtterHistoryzeroRecordsName": {
         "message": "No matching records found"
+    },
+    "portalPuckerName": {
+        "message": "pucker"
+    },
+    "portalExpandName": {
+        "message": "extend"
+    },
+    "portalSwitchName": {
+        "message": "switch"
     },
     "enableName": {
         "message": "Enable"

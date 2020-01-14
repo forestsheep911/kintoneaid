@@ -28,7 +28,7 @@ function showUtter(loginUserId) {
         let dbobj = promiseValue
         let trans = dbobj.transaction(["utterance_history"], "readwrite")
         let objectStore = trans.objectStore("utterance_history")
-        let ind = objectStore.index("cdt")
+        let ind = objectStore.index("idx_create_datetime")
         let fillarraywithinobj = []
         ind.openCursor(null, "prev").onsuccess = e => {
             var cursor = event.target.result
@@ -49,7 +49,7 @@ function showUtter(loginUserId) {
 
                     let createDateTimeEle = document.createElement("span")
                     createDateTimeEle.setAttribute("style", "white-space:nowrap;overflow:hidden; text-align:right")
-                    createDateTimeEle.innerText = cursor.value.CreateDateTime.Format("yyyy-MM-dd hh:mm:ss")
+                    createDateTimeEle.innerText = cursor.value.create_datetime.Format("yyyy-MM-dd hh:mm:ss")
                     fillobj.datetime = createDateTimeEle.outerHTML
                     fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
                     if (cursor.value.sourceType === "APP") {
@@ -161,7 +161,7 @@ function puckerUh(puckered) {
         let uhHeader = uh.getElementsByClassName("gaia-argoui-widget-header")[0]
         let uhBody = this.document.getElementById("uhtable_wrapper")
         let invisibleButton = document.createElement("a")
-        invisibleButton.setAttribute("title", "收起")
+        invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
         invisibleButton.setAttribute("class", "max-min-block")
         invisibleButton.setAttribute("style", "user-select:none;")
         invisibleButton.onclick = () => {
@@ -170,12 +170,12 @@ function puckerUh(puckered) {
             if ($(invisibleButton).hasClass('puckered')) {
                 uhPuckered = true
                 invisibleButton.style.backgroundImage = puckeredImgUrl
-                invisibleButton.setAttribute("title", "展开")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
                 uhBody.style.display = "none"
             } else {
                 uhPuckered = false
                 invisibleButton.style.backgroundImage = unPuckeredImgUrl
-                invisibleButton.setAttribute("title", "收起")
+                invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalPuckerName"))
                 uhBody.style.display = "block"
             }
             savePuckeredInfo("uh", uhPuckered)
@@ -184,7 +184,7 @@ function puckerUh(puckered) {
         if (puckered) {
             $(invisibleButton).toggleClass("puckered")
             invisibleButton.style.backgroundImage = puckeredImgUrl
-            invisibleButton.setAttribute("title", "展开")
+            invisibleButton.setAttribute("title", chrome.i18n.getMessage("portalExpandName"))
             uhBody.style.display = "none"
         } else {
             invisibleButton.style.backgroundImage = unPuckeredImgUrl
