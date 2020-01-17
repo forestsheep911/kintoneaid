@@ -7,7 +7,7 @@ window.addEventListener('popstate', function (e) {
 })
 
 window.onhashchange = () => {
-    countAccessedPages();
+    countAccessedPages()
     setTimeout(() => {
         // easy at
         chrome.runtime.sendMessage(null, {
@@ -265,220 +265,6 @@ function puckerApp(puckered) {
     } catch (error) {}
 }
 
-function saveUtter(saveobj) {
-    if (loginUserId) {
-        saveobj.utterUserId = loginUserId
-    } else {
-        return
-    }
-    saveobj.contentSummary = Encrypt(saveobj.contentSummary)
-    saveobj.link = Encrypt(saveobj.link)
-    openDB().then(function (promiseValue) {
-        let dbobj = promiseValue
-        let trans = dbobj.transaction(["utterance_history"], "readwrite")
-        let objectStore = trans.objectStore("utterance_history")
-        let requestput = objectStore.put(saveobj)
-        requestput.onsuccess = e => {}
-        requestput.onerror = e => {}
-    })
-}
-
-function getSaveSpaceUtterContent() {
-    // space的通知貌似并不是用iframe做的，所以不必像app那样分开取，这里一次都能取到
-    // link
-    let utterLink
-    let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
-
-    utterLink = commentTimes.length > 0 ? commentTimes[0].firstChild.href : null
-    if (!utterLink) {
-        return false
-    }
-    // // 获取 除mention外的发言内容
-    let utterContentSummary
-    let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
-
-    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
-    if (!firstCommentText) {
-        return false
-    }
-    let commentTextClone = firstCommentText.cloneNode(true)
-    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
-    while (readytodeletenodes.length > 0) {
-        readytodeletenodes[0].remove()
-    }
-    utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
-    if (!utterContentSummary) {
-        utterContentSummary = ""
-    }
-
-    // mention users
-    let mentionUsersArray = []
-    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
-    for (let i = 0; i < mentionUsers.length; i++) {
-        let oneUser = {
-            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
-            name: mentionUsers[i].innerText,
-            href: mentionUsers[i].href
-        }
-        mentionUsersArray.push(oneUser)
-    }
-
-    // get space and thread name
-    let spaceNameEles = document.getElementsByClassName("gaia-argoui-space-spacelayout-title")
-    let threadNameEles = document.getElementsByClassName("ocean-space-thread-name")
-    let spaceName = ""
-    let threadName = ""
-    if (spaceNameEles.length > 0) {
-        spaceName = spaceNameEles[0].innerText
-    }
-    if (threadNameEles.length > 0) {
-        // 如果是单thread space，则thread name的class中会有"assistive-text"
-        if (!$(threadNameEles[0]).hasClass("assistive-text")) {
-            threadName = threadNameEles[0].innerText
-        }
-    }
-
-    let saveobj = {
-        create_datetime: new Date(),
-        contentSummary: utterContentSummary,
-        link: utterLink,
-        sourceType: "SPACE",
-        sourceName: spaceName + ":" + threadName,
-        mentionUsers: mentionUsersArray
-    }
-    saveUtter(saveobj)
-}
-
-function getSaveAppUtterContent() {
-    // 获取link: URL + comment序列号
-    let commentUrl
-    let ptnUrl = new RegExp(/^.*record=\d+/g)
-    let match
-    if ((match = ptnUrl.exec(window.location.href)) != null) {
-        commentUrl = match[0]
-    } else {
-        return false
-    }
-    let utterNumbers = document.getElementsByClassName("itemlist-user-gaia")
-    let commentNumber = utterNumbers.length > 0 ? utterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
-    if (!commentNumber) {
-        return false
-    }
-    // 获取 除mention外的发言内容
-    let commentTexts = document.getElementsByClassName("commentlist-body-gaia")
-    console.log(commentTexts)
-    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
-    if (!firstCommentText) {
-        return false
-    }
-    let commentTextClone = firstCommentText.cloneNode(true)
-    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
-    while (readytodeletenodes.length > 0) {
-        readytodeletenodes[0].remove()
-    }
-    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
-    if (!utterContentSummary) {
-        utterContentSummary = ""
-    }
-    // mention users
-    let mentionUsersArray = []
-    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
-    for (let i = 0; i < mentionUsers.length; i++) {
-        let oneUser = {
-            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
-            name: mentionUsers[i].innerText,
-            href: mentionUsers[i].href
-        }
-        mentionUsersArray.push(oneUser)
-    }
-    // get app name
-    let appNameEles = document.getElementsByClassName("gaia-argoui-app-titlebar-content")
-    let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
-    }
-
-    // save
-    let saveobj = {
-        create_datetime: new Date(),
-        contentSummary: utterContentSummary,
-        link: commentUrl + "&comment=" + commentNumber,
-        sourceType: "APP",
-        sourceName: appName,
-        mentionUsers: mentionUsersArray
-    }
-    saveUtter(saveobj)
-    return true
-}
-
-function getSaveNotiAppUtterContent() {
-    let innerIFrames = document.getElementsByTagName("iframe")
-    if (innerIFrames.length == 0) {
-        return false
-    }
-    // 获取link: URL + comment序列号
-    let commentUrl
-    let ptnUrl = new RegExp(/(^.*\/k\/)#\/ntf\/mention\/k\/\D+(\d+)\D(\d+)/g)
-    let match
-    if ((match = ptnUrl.exec(window.location.href)) != null) {
-        console.log(match[0])
-        console.log(match[1])
-        console.log(match[2])
-        console.log(match[3])
-        commentUrl = match[1] + match[2] + "/show#record=" + match[3]
-        console.log(commentUrl)
-    } else {
-        return false
-    }
-
-    let ifUtterNumbers = innerIFrames[0].contentDocument.getElementsByClassName("itemlist-user-gaia")
-    let commentNumber = ifUtterNumbers.length > 0 ? ifUtterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
-    if (!commentNumber) {
-        return false
-    }
-    let ifCommentTexts = innerIFrames[0].contentDocument.getElementsByClassName("commentlist-body-gaia")
-    let firstCommentText = ifCommentTexts.length > 0 ? ifCommentTexts[0] : null
-    if (!firstCommentText) {
-        return false
-    }
-    let commentTextClone = firstCommentText.cloneNode(true)
-    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
-    while (readytodeletenodes.length > 0) {
-        readytodeletenodes[0].remove()
-    }
-    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 20)
-    if (!utterContentSummary) {
-        utterContentSummary = ""
-    }
-    // mention users
-    let mentionUsersArray = []
-    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
-    for (let i = 0; i < mentionUsers.length; i++) {
-        let oneUser = {
-            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
-            name: mentionUsers[i].innerText,
-            href: mentionUsers[i].href
-        }
-        mentionUsersArray.push(oneUser)
-    }
-    // get app name
-    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-app-titlebar-content")
-    let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
-    }
-    let saveobj = {
-        create_datetime: new Date(),
-        contentSummary: utterContentSummary,
-        link: commentUrl + "&comment=" + commentNumber,
-        sourceType: "APP",
-        sourceName: appName,
-        mentionUsers: mentionUsersArray
-    }
-    saveUtter(saveobj)
-    return true
-}
-
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     if (message.big_user_icon_enable) {
         sendResponse("bigusericon has been recived")
@@ -487,10 +273,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         sendResponse("easy at has been recived")
         setTimeout(() => {
             atinject(message.easy_at_mention_mark)
-        }, 2200);
+        }, 2200)
     } else if (message.most_used_app_enable) {
-        // sendResponse("most use app list has been recived")
-        // showApps(message.apps)
+        sendResponse("most use app list has been recived")
+        showApps(message.max)
     } else if (message.utter_history_enable) {
         sendResponse("utter history has been recived")
         showUtter(loginUserId)
@@ -509,18 +295,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     } else if (message.utterInSpace) {
         setTimeout(() => {
             getSaveSpaceUtterContent()
-        }, 200);
+        }, 200)
         sendResponse("utterInSpace -- by event reg")
     } else if (message.utterInApp) {
         setTimeout(() => {
             getSaveAppUtterContent()
-        }, 500);
+        }, 500)
         sendResponse("utterInApp -- by event reg")
     } else if (message.utterInNotiApp) {
         setTimeout(() => {
-            console.log("cs: noti app")
             getSaveNotiAppUtterContent()
-        }, 500);
+        }, 500)
         sendResponse("utterInNotiApp -- by event reg")
     } else {
         sendResponse("none of my bussiness -- by event reg")
@@ -532,7 +317,9 @@ window.onmessage = function (event) {
     if (event.data.id === "aifcogmioeencjbmlgcfnfkgffahnmpf") {
         if (event.data.msg === "on.kintone.portal.show") {
             if ($('#mostusedapp').length <= 0) {
-                showApps()
+                chrome.runtime.sendMessage(null, {
+                    mostusedapp: true
+                }, null, function (response) {})
             }
             if ($('#utterHistory').length <= 0) {
                 chrome.runtime.sendMessage(null, {

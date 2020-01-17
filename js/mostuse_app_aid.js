@@ -1,16 +1,20 @@
-function showApps() {
+function showApps(appAmount) {
     // most used app
     let seeMostApp = loadAppUsageInfo("see_most_app")
     if (seeMostApp) {
-        getMostUsedAppIdAndScore().then(matchAndGetAppName).then(render)
+        getMostUsedAppIdAndScore(appAmount).then(matchAndGetAppName).then(function (p) {
+            render(p, appAmount)
+        })
     } else {
         // last used app
-        getLastUsedApp().then(matchAndGetAppName).then(render)
+        getLastUsedApp(appAmount).then(matchAndGetAppName).then(function (p) {
+            render(p, appAmount)
+        })
     }
 }
 
 // most used app method
-function getMostUsedAppIdAndScore() {
+function getMostUsedAppIdAndScore(appAmount) {
     return new Promise((resolve, reject) => {
         openDB().then(function (promiseValue) {
             let dbObj = promiseValue
@@ -18,9 +22,8 @@ function getMostUsedAppIdAndScore() {
             let objectStore_history = trans.objectStore("app_history")
             let req = objectStore_history.getAll()
             req.onsuccess = (event) => {
-                console.log(event.target.result)
                 let inArray = event.target.result
-                let atLastResult = [];
+                let atLastResult = []
                 inArray.reduce(function (res, value) {
                     if (!res[value.app_id]) {
                         res[value.app_id] = {
@@ -30,19 +33,20 @@ function getMostUsedAppIdAndScore() {
                         atLastResult.push(res[value.app_id])
                     }
                     res[value.app_id].score += value.app_view_type
-                    return res;
+                    return res
                 }, {})
-                console.log(atLastResult)
                 atLastResult.sort((one, two) => {
                     return two.score - one.score
                 })
+                let delPos = atLastResult.length < appAmount ? atLastResult.length : appAmount
+                atLastResult.splice(delPos)
                 resolve([atLastResult, "most"])
             }
         })
     })
 }
 
-function getLastUsedApp() {
+function getLastUsedApp(appAmount) {
     return new Promise((resolve, reject) => {
         openDB().then(function (promiseValue) {
             let dbObj = promiseValue
@@ -50,7 +54,6 @@ function getLastUsedApp() {
             let objectStore_history = trans.objectStore("app_history")
             let ind = objectStore_history.index("idx_view_datetime")
             let resultArray = []
-            let upLimit = 15
             let lastId
             let found
             ind.openCursor(null, "prev").onsuccess = e => {
@@ -65,7 +68,7 @@ function getLastUsedApp() {
                             last_time: cursor.key
                         })
                         // console.log(resultArray)
-                        if (resultArray.length === upLimit) {
+                        if (resultArray.length === appAmount) {
                             resolve([resultArray, "last"])
                             return
                         } else {
@@ -74,7 +77,6 @@ function getLastUsedApp() {
                     }
                     cursor.continue()
                 } else {
-                    console.log([resultArray, "last"])
                     resolve([resultArray, "last"])
                 }
             }
@@ -128,7 +130,7 @@ function matchAndGetAppName(param) {
                         let dbObj = promiseValue
                         let trans = dbObj.transaction(["app_master"], "readonly")
                         let objectStore_app_master = trans.objectStore("app_master")
-                        let request = objectStore_app_master.get(inArray[i].id);
+                        let request = objectStore_app_master.get(inArray[i].id)
                         request.onsuccess = (event) => {
                             inArray[i].name = event.target.result.app_name
                             resolve()
@@ -150,7 +152,7 @@ function reRenderList(param, listui) {
     let dataArray = param[0]
     let mostOrLast = param[1]
     if (dataArray.length === 0) {
-        listui.innerText = chrome.i18n.getMessage("mostUsedAppNoRecordsName")
+        listui.innerText = chrome.i18n.getMessage("molastUsedAppNoRecordsName")
     } else {
         for (var i in dataArray) {
             let listli = document.createElement("li")
@@ -172,7 +174,7 @@ function reRenderList(param, listui) {
     }
 }
 
-function render(param) {
+function render(param, appAmount) {
     let dataArray = param[0]
     let mostOrLast = param[1]
     // show
@@ -188,7 +190,7 @@ function render(param) {
 
     let appHeader = document.createElement("div")
     appHeader.setAttribute("class", "gaia-argoui-widget-header gaia-argoui-widget-header-icon")
-    appHeader.setAttribute("style", "background-image: url(\"https://static.cybozu.cn/contents/k/image/ocean/cover/documents-select.jpg\"); background-position: left top; background-repeat: no-repeat;")
+    appHeader.setAttribute("style", "background-image: url(\"https://static.cybozu.com/contents/k/image/ocean/cover/documents-select.jpg\"); background-position: left top; background-repeat: no-repeat;")
     $(appList).append(appHeader)
 
     let appheadername = document.createElement("H3")
@@ -202,10 +204,10 @@ function render(param) {
     $(appList).append(listui)
     if (dataArray.length === 0) {
         if (mostOrLast === "most") {
-            listui.innerText = chrome.i18n.getMessage("mostUsedAppNoRecordsName")
+            listui.innerText = chrome.i18n.getMessage("molastUsedAppNoRecordsName")
         }
         if (mostOrLast === "last") {
-            listui.innerText = chrome.i18n.getMessage("lastUsedAppNoRecordsName")
+            listui.innerText = chrome.i18n.getMessage("molastUsedAppNoRecordsName")
         }
     } else {
         for (var i in dataArray) {
@@ -219,7 +221,8 @@ function render(param) {
             bspan1.setAttribute("class", "gaia-argoui-appscrollinglist-name")
             // bspan1.innerText = mostapp[i].appname + "(" + mostapp[i].viewtimes + ")"
             if (mostOrLast === "most") {
-                bspan1.innerText = dataArray[i].name + "(" + dataArray[i].score + ")"
+                // bspan1.innerText = dataArray[i].name + "(" + dataArray[i].score + ")"
+                bspan1.innerText = dataArray[i].name
             }
             if (mostOrLast === "last") {
                 bspan1.innerText = dataArray[i].name
@@ -270,13 +273,13 @@ function render(param) {
         $(listui).empty()
         $(switchButton).toggleClass("sw")
         if ($(switchButton).hasClass('sw')) {
-            getLastUsedApp().then(matchAndGetAppName).then((par) => {
+            getLastUsedApp(appAmount).then(matchAndGetAppName).then((par) => {
                 reRenderList(par, listui)
                 appheadername.innerText = chrome.i18n.getMessage("lastUsedAppName")
             })
             saveAppUsageInfo("see_most_app", false)
         } else {
-            getMostUsedAppIdAndScore().then(matchAndGetAppName).then((par) => {
+            getMostUsedAppIdAndScore(appAmount).then(matchAndGetAppName).then((par) => {
                 reRenderList(par, listui)
                 appheadername.innerText = chrome.i18n.getMessage("mostUsedAppName")
             })
@@ -286,15 +289,12 @@ function render(param) {
 }
 
 function countAccessedPages() {
-    console.log(location.href)
     let UrlObj = new URL(location.href)
-    console.log(UrlObj)
     // pathname patten like "/k/23"
     let ptnPathApp = new RegExp(/^\/k\/(\d+)(.*)$/g)
     let matPathApp = ptnPathApp.exec(UrlObj.pathname)
     // console.log(UrlObj.pathname)
     if (matPathApp && matPathApp.length > 2) {
-        console.log("is app")
         let appIdNumber = matPathApp[1]
         let appOtherInfo = matPathApp[2]
         let appRealName = ""
@@ -348,26 +348,17 @@ function countAccessedPages() {
     // hash patten like "/#/space/1/thread/1"
     let ptnPathSpace = new RegExp(/^#\/space\/\d+.*$/g)
     let matchPathSpace = ptnPathSpace.exec(UrlObj.hash)
-    if (matchPathSpace && matchPathSpace.length > 0) {
-        console.log(matchPathSpace)
-        console.log("is space")
-    }
+    // if (matchPathSpace && matchPathSpace.length > 0) {}
 
     // hash patten like "/#/ntf/mention/k/a:40:2:/136"
     let ptnPathAppInNoti = new RegExp(/^#\/ntf\/mention\/k\/a.*$/g)
     let matchPathAppInNoti = ptnPathAppInNoti.exec(UrlObj.hash)
-    if (matchPathAppInNoti && matchPathAppInNoti.length > 0) {
-        console.log(matchPathAppInNoti)
-        console.log("is app in notification")
-    }
+    // if (matchPathAppInNoti && matchPathAppInNoti.length > 0) {}
 
     // hash patten like "/#/ntf/mention/k/space/s:40:2:/136"
     let ptnPathSpaceInNoti = new RegExp(/^#\/ntf\/mention\/k\/space\/s.*$/g)
     let matchPathSpaceInNoti = ptnPathSpaceInNoti.exec(UrlObj.hash)
-    if (matchPathSpaceInNoti && matchPathSpaceInNoti.length > 0) {
-        console.log(matchPathSpaceInNoti)
-        console.log("is space in notification")
-    }
+    // if (matchPathSpaceInNoti && matchPathSpaceInNoti.length > 0) {}
 }
 
 function timeFn(d1) { //di作为一个变量传进来
@@ -375,9 +366,9 @@ function timeFn(d1) { //di作为一个变量传进来
     // var dateBegin = new Date(d1.replace(/-/g, "/")); //将-转化为/，使用new Date
     // var dateBegin = new Date(d1)
     var dateBegin = d1
-    var dateEnd = new Date(); //获取当前时间
-    var dateDiff = dateEnd.getTime() - dateBegin.getTime(); //时间差的毫秒数
-    var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+    var dateEnd = new Date() //获取当前时间
+    var dateDiff = dateEnd.getTime() - dateBegin.getTime() //时间差的毫秒数
+    var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)) //计算出相差天数
     var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
     var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
     //计算相差分钟数
@@ -386,6 +377,5 @@ function timeFn(d1) { //di作为一个变量传进来
     //计算相差秒数
     var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
     var seconds = Math.round(leave3 / 1000)
-    console.log(" 相差 " + dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒")
     return (dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒" + " 前")
 }

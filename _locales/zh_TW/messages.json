@@ -11,7 +11,7 @@
     "lastUsedAppName": {
         "message": "最近使用的應用"
     },
-    "mostUsedAppNoRecordsName": {
+    "molastUsedAppNoRecordsName": {
         "message": "自從kintone 助手安裝以來，還沒有使用過任何應用"
     },
     "optionBigUserIconName": {
@@ -21,7 +21,7 @@
         "message": "簡易@"
     },
     "optionMostUsedAppName": {
-        "message": "最常用應用"
+        "message": "常用/最近應用"
     },
     "optionMostUsedAppMaxName": {
         "message": "最多顯示應用數"

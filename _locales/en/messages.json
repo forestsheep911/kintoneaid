@@ -11,7 +11,7 @@
     "lastUsedAppName": {
         "message": "Last Used App"
     },
-    "mostUsedAppNoRecordsName": {
+    "molastUsedAppNoRecordsName": {
         "message": "no apps have been used since kintone aid was installed"
     },
     "optionBigUserIconName": {
@@ -21,7 +21,7 @@
         "message": "Easy @"
     },
     "optionMostUsedAppName": {
-        "message": "Most Used App"
+        "message": "Most And Last App"
     },
     "optionMostUsedAppMaxName": {
         "message": "Max number of apps"

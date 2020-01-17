@@ -55,7 +55,7 @@
         "js/ij.js",
         "icon/ddown.png",
         "icon/dup.png",
-        "icon/*"
+        "icon/double_arrow.png"
     ],
     "permissions": [
         "tabs",

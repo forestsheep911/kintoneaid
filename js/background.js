@@ -23,12 +23,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
 
     chrome.webRequest.onBeforeRequest.addListener(
         function (details) {
-            console.log(details)
             let nstString = ab2str(details.requestBody.raw[0].bytes)
-            console.log(nstString)
-            chrome.tabs.get(details.tabId, function (tab) {
-                console.log(tab)
-            })
+            chrome.tabs.get(details.tabId, function (tab) {})
         }, {
             urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
         },
@@ -37,10 +33,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
 
     chrome.webRequest.onCompleted.addListener(
         function (details) {
-            console.log(details)
             chrome.tabs.get(details.tabId, function (tab) {
-                console.log(tab)
-                console.log(tab.url)
                 let utterSpace
                 let utterApp
                 let utterNotiApp
@@ -60,19 +53,16 @@ chrome.runtime.onInstalled.addListener(function (details) {
                     utterSpace = true
                     utterApp = false
                     utterNotiApp = false
-                    console.log("noti")
                 } else if (ptnNotiApp.exec(tab.url) != null) {
                     utterSpace = false
                     utterApp = false
                     utterNotiApp = true
-                    console.log("noti in app")
                 }
                 chrome.tabs.sendMessage(tab.id, {
                     utterInSpace: utterSpace,
                     utterInApp: utterApp,
                     utterInNotiApp: utterNotiApp
                 }, null, function (response) {
-                    console.log(response)
                     // todo save db
                 })
             })
@@ -94,7 +84,6 @@ function isEasyAtEnable(tab) {
         let config = JSON.parse(localStorage.config)
         ableValue = config.easy_at !== false
         cus_text = config.easy_at_cus_text ? config.easy_at_cus_text : "@"
-        console.log(cus_text)
     }
     chrome.tabs.sendMessage(tab.id, {
         easy_at_enable: ableValue,
@@ -146,44 +135,48 @@ function getMostUsedAppData(tab) {
             maxCount = config.most_app_num ? config.most_app_num : 5
         }
     }
-    openDB().then(function (promiseValue) {
-        let dbobj = promiseValue
-        let trans = dbobj.transaction(["mostuseapp"], "readwrite")
-        let objectStore = trans.objectStore("mostuseapp")
-        let ind = objectStore.index("viewtimes")
-        let xx = {}
-        let readyToSendArray = []
-        let senderUrlObj = new URL(tab.url)
+    chrome.tabs.sendMessage(tab.id, {
+        most_used_app_enable: true,
+        max: maxCount
+    }, null, function (response) {})
+    // openDB().then(function (promiseValue) {
+    //     let dbobj = promiseValue
+    //     let trans = dbobj.transaction(["mostuseapp"], "readwrite")
+    //     let objectStore = trans.objectStore("mostuseapp")
+    //     let ind = objectStore.index("viewtimes")
+    //     let xx = {}
+    //     let readyToSendArray = []
+    //     let senderUrlObj = new URL(tab.url)
 
-        ind.openCursor(null, "prev").onsuccess = e => {
-            var cursor = event.target.result
-            if (cursor) {
-                xx.apphref = cursor.value.apphref
-                let xxUrlObj = new URL(xx.apphref)
-                xx.appname = cursor.value.appname
-                xx.viewtimes = cursor.value.viewtimes
-                if (senderUrlObj.host == xxUrlObj.host) {
-                    readyToSendArray.push(xx)
-                }
-                xx = {}
-                cursor.continue()
-            } else {
-                // no more results
-                let c = 0
-                for (var i in readyToSendArray) {
-                    c++
-                    if (c > maxCount) {
-                        // delete readyToSendArray[i]
-                        readyToSendArray.splice(i)
-                    }
-                }
-                chrome.tabs.sendMessage(tab.id, {
-                    most_used_app_enable: true,
-                    apps: readyToSendArray
-                }, null, function (response) {})
-            }
-        }
-    })
+    //     ind.openCursor(null, "prev").onsuccess = e => {
+    //         var cursor = event.target.result
+    //         if (cursor) {
+    //             xx.apphref = cursor.value.apphref
+    //             let xxUrlObj = new URL(xx.apphref)
+    //             xx.appname = cursor.value.appname
+    //             xx.viewtimes = cursor.value.viewtimes
+    //             if (senderUrlObj.host == xxUrlObj.host) {
+    //                 readyToSendArray.push(xx)
+    //             }
+    //             xx = {}
+    //             cursor.continue()
+    //         } else {
+    //             // no more results
+    //             let c = 0
+    //             for (var i in readyToSendArray) {
+    //                 c++
+    //                 if (c > maxCount) {
+    //                     // delete readyToSendArray[i]
+    //                     readyToSendArray.splice(i)
+    //                 }
+    //             }
+    //             chrome.tabs.sendMessage(tab.id, {
+    //                 most_used_app_enable: true,
+    //                 apps: readyToSendArray
+    //             }, null, function (response) {})
+    //         }
+    //     }
+    // })
 }
 
 function doAfterCreated(tab) {

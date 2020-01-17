@@ -3,7 +3,6 @@ function showUtter(loginUserId) {
     let uh = document.createElement("div")
     uh.setAttribute("class", "ocean-portal-widget")
     uh.setAttribute("id", "utterHistory")
-    // uh.setAttribute("onselectstart", "return false;")
     $(bodyright).prepend(uh)
 
     let widget = document.createElement("div")
@@ -13,7 +12,7 @@ function showUtter(loginUserId) {
 
     let header = document.createElement("div")
     header.setAttribute("class", "gaia-argoui-widget-header gaia-argoui-widget-header-icon")
-    header.setAttribute("style", "background-image: url(\"https://static.cybozu.cn/contents/k/image/ocean/cover/compass-select.jpg\"); background-position: left top; background-repeat: no-repeat;")
+    header.setAttribute("style", "background-image: url(\"https://static.cybozu.com/contents/k/image/ocean/cover/compass-select.jpg\"); background-position: left top; background-repeat: no-repeat;")
     $(widget).append(header)
 
     let menuTitle = document.createElement("h3")
@@ -54,14 +53,14 @@ function showUtter(loginUserId) {
                     fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
                     if (cursor.value.sourceType === "APP") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.cn/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
                         let mojiEle = document.createElement("span")
                         mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
                         imgEle.appendChild(mojiEle)
                         fillobj.sourceName = imgEle.outerHTML
                     } else if (cursor.value.sourceType === "SPACE") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.cn/contents/k/image/argo/uiparts/widget/spaces_56.png"); background-position: left top;background-repeat:no-repeat;background-size:25px;max-width:240px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png"); background-position: left top;background-repeat:no-repeat;background-size:25px;max-width:240px;padding-left:30px;white-space:nowrap;overflow:hidden;')
                         let mojiEle = document.createElement("span")
                         mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
                         imgEle.appendChild(mojiEle)
@@ -150,7 +149,7 @@ function getMentionUsersId(inArray) {
         outPutString += inArray[i].name
     }
     if (outPutString.length > 20) {
-        outPutString = outPutString.substring(0, 17) + "..."
+        outPutString = outPutString.substring(0, 23) + "..."
     }
     return outPutString
 }
@@ -189,7 +188,213 @@ function puckerUh(puckered) {
         } else {
             invisibleButton.style.backgroundImage = unPuckeredImgUrl
         }
-    } catch (error) {
-        console.log(error)
+    } catch (error) {}
+}
+
+function saveUtter(saveobj) {
+    if (loginUserId) {
+        saveobj.utterUserId = loginUserId
+    } else {
+        return
     }
+    saveobj.contentSummary = Encrypt(saveobj.contentSummary)
+    saveobj.link = Encrypt(saveobj.link)
+    openDB().then(function (promiseValue) {
+        let dbobj = promiseValue
+        let trans = dbobj.transaction(["utterance_history"], "readwrite")
+        let objectStore = trans.objectStore("utterance_history")
+        let requestput = objectStore.put(saveobj)
+        requestput.onsuccess = e => {}
+        requestput.onerror = e => {}
+    })
+}
+
+function getSaveSpaceUtterContent() {
+    // space的通知貌似并不是用iframe做的，所以不必像app那样分开取，这里一次都能取到
+    // link
+    let utterLink
+    let commentTimes = document.getElementsByClassName("ocean-ui-comments-commentbase-time")
+
+    utterLink = commentTimes.length > 0 ? commentTimes[0].firstChild.href : null
+    if (!utterLink) {
+        return false
+    }
+    // // 获取 除mention外的发言内容
+    let utterContentSummary
+    let commentTexts = document.getElementsByClassName("ocean-ui-comments-commentbase-text")
+
+    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 29)
+    if (!utterContentSummary) {
+        utterContentSummary = ""
+    }
+
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+
+    // get space and thread name
+    let spaceNameEles = document.getElementsByClassName("gaia-argoui-space-spacelayout-title")
+    let threadNameEles = document.getElementsByClassName("ocean-space-thread-name")
+    let spaceName = ""
+    let threadName = ""
+    if (spaceNameEles.length > 0) {
+        spaceName = spaceNameEles[0].innerText
+    }
+    if (threadNameEles.length > 0) {
+        // 如果是单thread space，则thread name的class中会有"assistive-text"
+        if (!$(threadNameEles[0]).hasClass("assistive-text")) {
+            threadName = threadNameEles[0].innerText
+        }
+    }
+
+    let saveobj = {
+        create_datetime: new Date(),
+        contentSummary: utterContentSummary,
+        link: utterLink,
+        sourceType: "SPACE",
+        sourceName: spaceName + ":" + threadName,
+        mentionUsers: mentionUsersArray
+    }
+    saveUtter(saveobj)
+}
+
+function getSaveAppUtterContent() {
+    // 获取link: URL + comment序列号
+    let commentUrl
+    let ptnUrl = new RegExp(/^.*record=\d+/g)
+    let match
+    if ((match = ptnUrl.exec(window.location.href)) != null) {
+        commentUrl = match[0]
+    } else {
+        return false
+    }
+    let utterNumbers = document.getElementsByClassName("itemlist-user-gaia")
+    let commentNumber = utterNumbers.length > 0 ? utterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
+    if (!commentNumber) {
+        return false
+    }
+    // 获取 除mention外的发言内容
+    let commentTexts = document.getElementsByClassName("commentlist-body-gaia")
+    let firstCommentText = commentTexts.length > 0 ? commentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 29)
+    if (!utterContentSummary) {
+        utterContentSummary = ""
+    }
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+    // get app name
+    let appNameEles = document.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appName
+    if (appNameEles.length > 0) {
+        appName = appNameEles[0].innerText
+    }
+
+    // save
+    let saveobj = {
+        create_datetime: new Date(),
+        contentSummary: utterContentSummary,
+        link: commentUrl + "&comment=" + commentNumber,
+        sourceType: "APP",
+        sourceName: appName,
+        mentionUsers: mentionUsersArray
+    }
+    saveUtter(saveobj)
+    return true
+}
+
+function getSaveNotiAppUtterContent() {
+    let innerIFrames = document.getElementsByTagName("iframe")
+    if (innerIFrames.length == 0) {
+        return false
+    }
+    // 获取link: URL + comment序列号
+    let commentUrl
+    let ptnUrl = new RegExp(/(^.*\/k\/)#\/ntf\/mention\/k\/\D+(\d+)\D(\d+)/g)
+    let match
+    if ((match = ptnUrl.exec(window.location.href)) != null) {
+        commentUrl = match[1] + match[2] + "/show#record=" + match[3]
+    } else {
+        return false
+    }
+
+    let ifUtterNumbers = innerIFrames[0].contentDocument.getElementsByClassName("itemlist-user-gaia")
+    let commentNumber = ifUtterNumbers.length > 0 ? ifUtterNumbers[0].firstChild.nodeValue.replace(/:\s*/g, "") : null
+    if (!commentNumber) {
+        return false
+    }
+    let ifCommentTexts = innerIFrames[0].contentDocument.getElementsByClassName("commentlist-body-gaia")
+    let firstCommentText = ifCommentTexts.length > 0 ? ifCommentTexts[0] : null
+    if (!firstCommentText) {
+        return false
+    }
+    let commentTextClone = firstCommentText.cloneNode(true)
+    let readytodeletenodes = commentTextClone.getElementsByClassName("ocean-ui-plugin-mention-user")
+    while (readytodeletenodes.length > 0) {
+        readytodeletenodes[0].remove()
+    }
+    let utterContentSummary = commentTextClone.innerText.replace(/\s/g, "").substring(0, 29)
+    if (!utterContentSummary) {
+        utterContentSummary = ""
+    }
+    // mention users
+    let mentionUsersArray = []
+    let mentionUsers = firstCommentText.getElementsByClassName("ocean-ui-plugin-mention-user")
+    for (let i = 0; i < mentionUsers.length; i++) {
+        let oneUser = {
+            "data-mention-id": mentionUsers[i].getAttribute("data-mention-id"),
+            name: mentionUsers[i].innerText,
+            href: mentionUsers[i].href
+        }
+        mentionUsersArray.push(oneUser)
+    }
+    // get app name
+    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appName
+    if (appNameEles.length > 0) {
+        appName = appNameEles[0].innerText
+    }
+    let saveobj = {
+        create_datetime: new Date(),
+        contentSummary: utterContentSummary,
+        link: commentUrl + "&comment=" + commentNumber,
+        sourceType: "APP",
+        sourceName: appName,
+        mentionUsers: mentionUsersArray
+    }
+    saveUtter(saveobj)
+    return true
 }
