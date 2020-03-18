@@ -39,7 +39,7 @@
         "message": "内容"
     },
     "UtterHistoryColumnMentionsName": {
-        "message": "メンション ユーザー"
+        "message": "@"
     },
     "UtterHistoryColumnSourceName": {
         "message": "出所"

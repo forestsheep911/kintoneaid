@@ -230,7 +230,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         sendResponse("most used app request has been received. --by background")
     }
     if (message.utterHistory) {
-        console.log("start utter history")
+        // console.log("start utter history")
         isUtterHistoryEnable(sender.tab)
         sendResponse("utter history request has been received. --by background")
     }
