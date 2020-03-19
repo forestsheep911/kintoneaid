@@ -60,7 +60,7 @@ function showUtter(loginUserId) {
                         fillobj.sourceName = imgEle.outerHTML
                     } else if (cursor.value.sourceType === "SPACE") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png"); background-position: left top;background-repeat:no-repeat;background-size:25px;max-width:240px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
                         let mojiEle = document.createElement("span")
                         mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
                         imgEle.appendChild(mojiEle)
