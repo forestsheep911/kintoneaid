@@ -85,7 +85,7 @@ function showUtter(loginUserId) {
                     pagingType: "full_numbers",
                     lengthMenu: [3, 5, 8, 13, 21, 34, 55],
                     data: fillarraywithinobj,
-                    autoWidth: false,
+                    autoWidth: true,
                     language: {
                         paginate: {
                             first: '«',
@@ -317,10 +317,29 @@ function getSaveAppUtterContent() {
         mentionUsersArray.push(oneUser)
     }
     // get app name
-    let appNameEles = document.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appNameEles = document.getElementsByClassName("gaia-argoui-app-breadcrumb-link")
+    let spaceName
     let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
+    let fullName
+    for (let i = 0; i < appNameEles.length; i++) {
+        console.log(appNameEles[i].href)
+
+        let ptnSpace = new RegExp(/\/k\/#\/space/g)
+        let matchSpace = ptnSpace.exec(appNameEles[i].href)
+        if ( matchSpace != null) {
+            spaceName = appNameEles[i].innerText
+        }
+
+        let ptnApp = new RegExp(/\/k\/\d+\/$/g)
+        let matchApp = ptnApp.exec(appNameEles[i].href)
+        if ( matchApp != null) {
+            appName = appNameEles[i].innerText
+        }
+    }
+    if (spaceName) {
+        fullName = spaceName + ":" + appName
+    } else {
+        fullName = appName
     }
 
     // save
@@ -329,7 +348,7 @@ function getSaveAppUtterContent() {
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
-        sourceName: appName,
+        sourceName: fullName,
         mentionUsers: mentionUsersArray
     }
     saveUtter(saveobj)
@@ -382,17 +401,37 @@ function getSaveNotiAppUtterContent() {
         mentionUsersArray.push(oneUser)
     }
     // get app name
-    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-ntf-breadcrumb-item")
+    let spaceName
     let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
+    let fullName
+    for (let i = 0; i < appNameEles.length; i++) {
+        console.log(appNameEles[i].href)
+
+        let ptnSpace = new RegExp(/\/k\/#\/space/g)
+        let matchSpace = ptnSpace.exec(appNameEles[i].href)
+        if ( matchSpace != null) {
+            spaceName = appNameEles[i].innerText
+        }
+
+        let ptnApp = new RegExp(/\/k\/\d+\/$/g)
+        let matchApp = ptnApp.exec(appNameEles[i].href)
+        if ( matchApp != null) {
+            appName = appNameEles[i].innerText
+        }
     }
+    if (spaceName) {
+        fullName = spaceName + ":" + appName
+    } else {
+        fullName = appName
+    }
+
     let saveobj = {
         create_datetime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
-        sourceName: appName,
+        sourceName: fullName,
         mentionUsers: mentionUsersArray
     }
     saveUtter(saveobj)
