@@ -39,7 +39,7 @@
         "message": "内容"
     },
     "UtterHistoryColumnMentionsName": {
-        "message": "@的用户"
+        "message": "@"
     },
     "UtterHistoryColumnSourceName": {
         "message": "出处"

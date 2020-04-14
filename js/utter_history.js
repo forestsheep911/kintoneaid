@@ -53,14 +53,16 @@ function showUtter(loginUserId) {
                     fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
                     if (cursor.value.sourceType === "APP") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;max-width:250px;padding-left:30px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;')
+                        imgEle.setAttribute("title", cursor.value.sourceName ? cursor.value.sourceName : "unknow")
                         let mojiEle = document.createElement("span")
                         mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
                         imgEle.appendChild(mojiEle)
                         fillobj.sourceName = imgEle.outerHTML
                     } else if (cursor.value.sourceType === "SPACE") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png"); background-position: left top;background-repeat:no-repeat;background-size:25px;max-width:240px;padding-left:30px;white-space:nowrap;overflow:hidden;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;max-width:250px;padding-left:30px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;')
+                        imgEle.setAttribute("title", cursor.value.sourceName ? cursor.value.sourceName : "unknow")
                         let mojiEle = document.createElement("span")
                         mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
                         imgEle.appendChild(mojiEle)
@@ -85,7 +87,7 @@ function showUtter(loginUserId) {
                     pagingType: "full_numbers",
                     lengthMenu: [3, 5, 8, 13, 21, 34, 55],
                     data: fillarraywithinobj,
-                    autoWidth: false,
+                    autoWidth: true,
                     language: {
                         paginate: {
                             first: '«',
@@ -105,20 +107,16 @@ function showUtter(loginUserId) {
                     ],
                     columnDefs: [{
                         targets: 0,
-                        type: "html",
-                        width: "100px"
+                        type: "html"
                     }, {
                         targets: 1,
-                        width: "240px"
                     }, {
                         targets: 2,
-                        type: "html",
-                        width: "50px"
+                        type: "html"
                     }, {
                         targets: 3,
                         type: "html",
-                        className: "uhtable_col_datetime",
-                        width: "120px"
+                        className: "uhtable_col_datetime"
                     }],
                     columns: [{
                         data: "utterence",
@@ -317,10 +315,29 @@ function getSaveAppUtterContent() {
         mentionUsersArray.push(oneUser)
     }
     // get app name
-    let appNameEles = document.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appNameEles = document.getElementsByClassName("gaia-argoui-app-breadcrumb-link")
+    let spaceName
     let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
+    let fullName
+    for (let i = 0; i < appNameEles.length; i++) {
+        console.log(appNameEles[i].href)
+
+        let ptnSpace = new RegExp(/\/k\/#\/space/g)
+        let matchSpace = ptnSpace.exec(appNameEles[i].href)
+        if (matchSpace != null) {
+            spaceName = appNameEles[i].innerText
+        }
+
+        let ptnApp = new RegExp(/\/k\/\d+\/$/g)
+        let matchApp = ptnApp.exec(appNameEles[i].href)
+        if (matchApp != null) {
+            appName = appNameEles[i].innerText
+        }
+    }
+    if (spaceName) {
+        fullName = spaceName + ":" + appName
+    } else {
+        fullName = appName
     }
 
     // save
@@ -329,7 +346,7 @@ function getSaveAppUtterContent() {
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
-        sourceName: appName,
+        sourceName: fullName,
         mentionUsers: mentionUsersArray
     }
     saveUtter(saveobj)
@@ -382,17 +399,37 @@ function getSaveNotiAppUtterContent() {
         mentionUsersArray.push(oneUser)
     }
     // get app name
-    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-app-titlebar-content")
+    let appNameEles = innerIFrames[0].contentDocument.getElementsByClassName("gaia-argoui-ntf-breadcrumb-item")
+    let spaceName
     let appName
-    if (appNameEles.length > 0) {
-        appName = appNameEles[0].innerText
+    let fullName
+    for (let i = 0; i < appNameEles.length; i++) {
+        console.log(appNameEles[i].href)
+
+        let ptnSpace = new RegExp(/\/k\/#\/space/g)
+        let matchSpace = ptnSpace.exec(appNameEles[i].href)
+        if (matchSpace != null) {
+            spaceName = appNameEles[i].innerText
+        }
+
+        let ptnApp = new RegExp(/\/k\/\d+\/$/g)
+        let matchApp = ptnApp.exec(appNameEles[i].href)
+        if (matchApp != null) {
+            appName = appNameEles[i].innerText
+        }
     }
+    if (spaceName) {
+        fullName = spaceName + ":" + appName
+    } else {
+        fullName = appName
+    }
+
     let saveobj = {
         create_datetime: new Date(),
         contentSummary: utterContentSummary,
         link: commentUrl + "&comment=" + commentNumber,
         sourceType: "APP",
-        sourceName: appName,
+        sourceName: fullName,
         mentionUsers: mentionUsersArray
     }
     saveUtter(saveobj)

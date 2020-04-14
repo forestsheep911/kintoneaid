@@ -39,7 +39,7 @@
         "message": "Content"
     },
     "UtterHistoryColumnMentionsName": {
-        "message": "Mention Users"
+        "message": "@"
     },
     "UtterHistoryColumnSourceName": {
         "message": "Source"
