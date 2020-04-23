@@ -53,19 +53,13 @@ function showUtter(loginUserId) {
                     fillobj.mention = getMentionUsersId(cursor.value.mentionUsers)
                     if (cursor.value.sourceType === "APP") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;max-width:250px;padding-left:30px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/apps_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;height:25px;width:25px;margin-left:auto;margin-right:auto;')
                         imgEle.setAttribute("title", cursor.value.sourceName ? cursor.value.sourceName : "unknow")
-                        let mojiEle = document.createElement("span")
-                        mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
-                        imgEle.appendChild(mojiEle)
                         fillobj.sourceName = imgEle.outerHTML
                     } else if (cursor.value.sourceType === "SPACE") {
                         let imgEle = document.createElement("div")
-                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;max-width:250px;padding-left:30px;white-space:nowrap;overflow:hidden;text-overflow: ellipsis;')
+                        imgEle.setAttribute("style", 'background-image:url("https://static.cybozu.com/contents/k/image/argo/uiparts/widget/spaces_56.png");background-position:left top;background-repeat:no-repeat;background-size:25px;height:25px;width:25px;margin-left:auto;margin-right:auto;')
                         imgEle.setAttribute("title", cursor.value.sourceName ? cursor.value.sourceName : "unknow")
-                        let mojiEle = document.createElement("span")
-                        mojiEle.innerText = cursor.value.sourceName ? cursor.value.sourceName : "unknow"
-                        imgEle.appendChild(mojiEle)
                         fillobj.sourceName = imgEle.outerHTML
                     } else {
                         fillobj.sourceName = "unknow"
@@ -112,6 +106,7 @@ function showUtter(loginUserId) {
                         targets: 1,
                     }, {
                         targets: 2,
+                        width: "50px",
                         type: "html"
                     }, {
                         targets: 3,
