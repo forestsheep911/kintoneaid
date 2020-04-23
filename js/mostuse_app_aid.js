@@ -164,7 +164,7 @@ function reRenderList(param, listui) {
             let bspan1 = document.createElement("span")
             bspan1.setAttribute("class", "gaia-argoui-appscrollinglist-name")
             if (mostOrLast === "most") {
-                bspan1.innerText = dataArray[i].name + "(" + dataArray[i].score + ")"
+                bspan1.innerText = dataArray[i].name
             }
             if (mostOrLast === "last") {
                 bspan1.innerText = dataArray[i].name
