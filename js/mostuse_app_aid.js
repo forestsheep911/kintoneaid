@@ -293,10 +293,43 @@ function countAccessedPages() {
     // pathname patten like "/k/23"
     let ptnPathApp = new RegExp(/^\/k\/(\d+)(.*)$/g)
     let matPathApp = ptnPathApp.exec(UrlObj.pathname)
-    // console.log(UrlObj.pathname)
+
     if (matPathApp && matPathApp.length > 2) {
         let appIdNumber = matPathApp[1]
         let appOtherInfo = matPathApp[2]
+
+        // when app is deleted
+        if (document.title == "Error") {
+            // delete from db if exist
+            openDB().then(function (promiseValue) {
+                let dbObj = promiseValue
+                let trans = dbObj.transaction(["app_master", "app_history"], "readwrite")
+                // delete master table
+                let objectStore_app_master = trans.objectStore("app_master")
+                let q = objectStore_app_master.delete(appIdNumber)
+                q.onsuccess = e => {
+                }
+                q.onerror = e => {
+                }
+                // delete history table
+                let objectStore_history = trans.objectStore("app_history")
+                let indexHisId = objectStore_history.index("idx_id")
+                indexHisId.openCursor().onsuccess = e => {
+                    var cursor = event.target.result
+                    if (cursor) {
+                        if (cursor.key === appIdNumber) {
+                            let delq = cursor.delete()
+                            delq.onsuccess = function () {
+                            }
+                        }
+                        cursor.continue()
+                    }
+                }
+            })
+            return
+        }
+
+        // normal situation
         let appRealName = ""
         let appViewType = 1
         if (appOtherInfo.indexOf("show") != -1 || appOtherInfo.indexOf("edit") != -1) {
