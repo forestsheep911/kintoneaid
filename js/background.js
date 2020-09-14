@@ -21,56 +21,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         }
     })
 
-    chrome.webRequest.onBeforeRequest.addListener(
-        function (details) {
-            let nstString = ab2str(details.requestBody.raw[0].bytes)
-            chrome.tabs.get(details.tabId, function (tab) {})
-        }, {
-            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
-        },
-        ["requestBody"]
-    )
-
-    chrome.webRequest.onCompleted.addListener(
-        function (details) {
-            chrome.tabs.get(details.tabId, function (tab) {
-                let utterSpace
-                let utterApp
-                let utterNotiApp
-                let ptnSpace = new RegExp(/\/k\/#\/space/g)
-                let ptnNotiSpace = new RegExp(/\/k\/#\/ntf\/mention\/k\/space/g)
-                let ptnNotiApp = new RegExp(/\/k\/#\/ntf\/mention\/k\/(?!space)/g)
-                let ptnApp = new RegExp(/\/k\/\d+\//g)
-                if (ptnSpace.exec(tab.url) != null) {
-                    utterSpace = true
-                    utterApp = false
-                    utterNotiApp = false
-                } else if (ptnApp.exec(tab.url) != null) {
-                    utterSpace = false
-                    utterApp = true
-                    utterNotiApp = false
-                } else if (ptnNotiSpace.exec(tab.url) != null) {
-                    utterSpace = true
-                    utterApp = false
-                    utterNotiApp = false
-                } else if (ptnNotiApp.exec(tab.url) != null) {
-                    utterSpace = false
-                    utterApp = false
-                    utterNotiApp = true
-                }
-                chrome.tabs.sendMessage(tab.id, {
-                    utterInSpace: utterSpace,
-                    utterInApp: utterApp,
-                    utterInNotiApp: utterNotiApp
-                }, null, function (response) {
-                    // todo save db
-                })
-            })
-        }, {
-            urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
-        },
-        ["responseHeaders"]
-    )
+    
 })
 
 function ab2str(buf) {
@@ -139,44 +90,6 @@ function getMostUsedAppData(tab) {
         most_used_app_enable: true,
         max: maxCount
     }, null, function (response) {})
-    // openDB().then(function (promiseValue) {
-    //     let dbobj = promiseValue
-    //     let trans = dbobj.transaction(["mostuseapp"], "readwrite")
-    //     let objectStore = trans.objectStore("mostuseapp")
-    //     let ind = objectStore.index("viewtimes")
-    //     let xx = {}
-    //     let readyToSendArray = []
-    //     let senderUrlObj = new URL(tab.url)
-
-    //     ind.openCursor(null, "prev").onsuccess = e => {
-    //         var cursor = event.target.result
-    //         if (cursor) {
-    //             xx.apphref = cursor.value.apphref
-    //             let xxUrlObj = new URL(xx.apphref)
-    //             xx.appname = cursor.value.appname
-    //             xx.viewtimes = cursor.value.viewtimes
-    //             if (senderUrlObj.host == xxUrlObj.host) {
-    //                 readyToSendArray.push(xx)
-    //             }
-    //             xx = {}
-    //             cursor.continue()
-    //         } else {
-    //             // no more results
-    //             let c = 0
-    //             for (var i in readyToSendArray) {
-    //                 c++
-    //                 if (c > maxCount) {
-    //                     // delete readyToSendArray[i]
-    //                     readyToSendArray.splice(i)
-    //                 }
-    //             }
-    //             chrome.tabs.sendMessage(tab.id, {
-    //                 most_used_app_enable: true,
-    //                 apps: readyToSendArray
-    //             }, null, function (response) {})
-    //         }
-    //     }
-    // })
 }
 
 function doAfterCreated(tab) {
@@ -221,6 +134,47 @@ chrome.tabs.onUpdated.addListener(function (tabID, changeInfo, tab) {
         doAfterCreated(tab)
     }
 })
+
+chrome.webRequest.onCompleted.addListener(
+    function (details) {
+        chrome.tabs.get(details.tabId, function (tab) {
+            let utterSpace
+            let utterApp
+            let utterNotiApp
+            let ptnSpace = new RegExp(/\/k\/#\/space/g)
+            let ptnNotiSpace = new RegExp(/\/k\/#\/ntf\/mention\/k\/space/g)
+            let ptnNotiApp = new RegExp(/\/k\/#\/ntf\/mention\/k\/(?!space)/g)
+            let ptnApp = new RegExp(/\/k\/\d+\//g)
+            if (ptnSpace.exec(tab.url) != null) {
+                utterSpace = true
+                utterApp = false
+                utterNotiApp = false
+            } else if (ptnApp.exec(tab.url) != null) {
+                utterSpace = false
+                utterApp = true
+                utterNotiApp = false
+            } else if (ptnNotiSpace.exec(tab.url) != null) {
+                utterSpace = true
+                utterApp = false
+                utterNotiApp = false
+            } else if (ptnNotiApp.exec(tab.url) != null) {
+                utterSpace = false
+                utterApp = false
+                utterNotiApp = true
+            }
+            chrome.tabs.sendMessage(tab.id, {
+                utterInSpace: utterSpace,
+                utterInApp: utterApp,
+                utterInNotiApp: utterNotiApp
+            }, null, function (response) {
+                // todo save db
+            })
+        })
+    }, {
+        urls: ["https://*/k/api/comment/add.json*", "https://*/k/api/space/thread/post/add.json*"]
+    },
+    ["responseHeaders"]
+)
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // console.log(message)
