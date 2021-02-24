@@ -1,7 +1,10 @@
 chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason === "install") {
     chrome.storage.sync.get(["config"], function (result) {
-      let ExistConfig = JSON.parse(result.config);
+      let ExistConfig;
+      if (result.config) {
+        ExistConfig = JSON.parse(result.config);
+      }
       let defaultConfig = {
         big_icon: true,
         easy_at: true,

@@ -26,7 +26,6 @@ function optionGo() {
       utterHistoryTitle: chrome.i18n.getMessage("optionUtterHistoryTitleName"),
     },
     mounted: function () {
-      localStorage.removeItem("config")
       let _this = this;
       chrome.storage.sync.get(["config"], function (result) {
         _this.config = JSON.parse(result.config);
@@ -37,36 +36,37 @@ function optionGo() {
         if (!_this.config.easy_at_cus_text) {
           _this.config.easy_at_cus_text = "@";
         }
-        if (_this.config.big_icon !== undefined) {
+        if (_this.config.big_icon !== false) {
           _this.config.big_icon = true;
           $("#bc1 .button").toggleClass("inactive");
           $("#bc1 .content").toggleClass("inactive");
         }
-        if (_this.config.easy_at !== undefined) {
+        if (_this.config.easy_at !== false) {
           _this.config.easy_at = true;
           $("#bc2 .button").toggleClass("inactive");
           $("#bc2 .content").toggleClass("inactive");
           $("#easy_at_cus_text_title").toggleClass("inactive");
           $("#easy_at_cus_text_value").toggleClass("inactive");
         }
-        if (_this.config.most_app !== undefined) {
+        if (_this.config.most_app !== false) {
           _this.config.most_app = true;
           $("#bc3 .button").toggleClass("inactive");
           $("#bc3 .content").toggleClass("inactive");
           $("#tc31").toggleClass("inactive");
           $("#tc32").toggleClass("inactive");
         }
-        if (_this.config.cus_por !== undefined) {
+        if (_this.config.cus_por !== false) {
           _this.config.cus_por = true;
           $("#bc4 .button").toggleClass("inactive");
           $("#bc4 .content").toggleClass("inactive");
         }
-        if (_this.config.utter_history !== undefined) {
+        if (_this.config.utter_history !== false) {
           _this.config.utter_history = true;
           $("#bc5 .button").toggleClass("inactive");
           $("#bc5 .content").toggleClass("inactive");
         }
         _this.saveconfig();
+        localStorage.config = JSON.stringify(_this.config)
       });
     },
     methods: {
